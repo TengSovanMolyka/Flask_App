@@ -1,0 +1,135 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+
+    <div class="dashboard-header justify-content-between mb-4">
+        <h2 class="fw-bold text-uppercase mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">
+            Welcome back! Here's an overview of your store.
+        </p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4">
+
+        <!-- Total Sales -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <i class="bi bi-cash-stack fs-2 text-success mb-2"></i>
+                <h6 class="text-muted">Total Sales</h6>
+                <h3 class="fw-bold text-success">$xx,xxx</h3>
+                <small class="text-success">
+                    <i class="bi bi-arrow-up"></i>+12% This Month
+                </small>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <i class="bi bi-receipt fs-2 text-primary mb-2"></i>
+                <h6 class="text-muted">Orders</h6>
+                <h3 class="fw-bold">xxx</h3>
+                <small class="text-primary">
+                    <i class="bi bi-cart-check"></i>
+                    Active Orders
+                </small>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <i class="bi bi-people fs-2 text-info mb-2"></i>
+                <h6 class="text-muted">Customers</h6>
+                <h3 class="fw-bold">x,xxx</h3>
+                <small class="text-info">
+                    <i class="bi bi-person-plus"></i>
+                    New Members
+                </small>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 text-center">
+                <i class="bi bi-bag fs-2 text-warning mb-2"></i>
+                <h6 class="text-muted">Products</h6>
+                <h3 class="fw-bold">xxx</h3>
+                <small class="text-warning">
+                    <i class="bi bi-box"></i>
+                    Stock Status
+                </small>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Extra Row for Charts or Tables -->
+    <div class="row g-4 mt-2">
+        <!-- Recent Orders -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-uppercase">Recent Orders</h6>
+                    <a href="#" class="btn btn-outline-dark btn-sm">View All</a>
+                </div>
+
+{#                <div class="table-responsive">#}
+{#                    <table class="table align-middle">#}
+{#                        <thead>#}
+{#                            <tr>#}
+{#                                <th>Order ID</th>#}
+{#                                <th>Customer</th>#}
+{#                                <th>Date</th>#}
+{#                                <th>Total</th>#}
+{#                                <th>Status</th>#}
+{#                            </tr>#}
+{#                        </thead>#}
+{##}
+{#                        <tbody>#}
+{#                            <tr>#}
+{#                                <td>#1001</td>#}
+{#                                <td>xxxx</td>#}
+{#                                <td>16 Jul 2026</td>#}
+{#                                <td>$120</td>#}
+{#                                <td>#}
+{#                                    <span class="badge rounded-pill bg-success">Completed</span>#}
+{#                                </td>#}
+{#                            </tr>#}
+{##}
+{#                            <tr>#}
+{#                                <td>#1002</td>#}
+{#                                <td>xxxx</td>#}
+{#                                <td>17 Jul 2026</td>#}
+{#                                <td>$120</td>#}
+{#                                <td>#}
+{#                                    <span class="badge rounded-pill bg-warning text-dark">Pending</span>#}
+{#                                </td>#}
+{#                            </tr>#}
+{##}
+{#                            <tr>#}
+{#                                <td>#1003</td>#}
+{#                                <td>xxxx</td>#}
+{#                                <td>18 Jul 2026</td>#}
+{#                                <td>$120</td>#}
+{#                                <td>#}
+{#                                    <span class="badge rounded-pill bg-danger">Cancel</span>#}
+{#                                </td>#}
+{#                            </tr>#}
+{#                        </tbody>#}
+{#                    </table>#}
+{#                </div>#}
+            </div>
+        </div>
+
+        <!-- Sales Overview -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <h6 class="fw-bold mb-3">Sales Overview</h6>
+                <canvas id="salesChart" height="240"></canvas>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

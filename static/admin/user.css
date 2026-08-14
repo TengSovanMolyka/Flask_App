@@ -1,0 +1,21 @@
+/* User Management */
+.admin-content .card {
+    border-radius: 10px;
+}
+
+.admin-content .form-label {
+    font-size: 0.9rem;
+    color: #2a2a3d;
+}
+
+.admin-content table {
+    font-size: 0.95rem;
+}
+
+.admin-content table thead {
+    background-color: #f1f3f5;
+}
+
+.admin-content table tbody tr:hover {
+    background-color: #f8f9fa;
+}

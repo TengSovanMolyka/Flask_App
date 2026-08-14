@@ -1,0 +1,99 @@
+<aside class="admin-sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-header text-uppercase">
+        <a href="/admin/dashboard" class="admin-logo">
+            La Beauté Studio
+        </a>
+    </div>
+
+    <!-- Dashboard Menu -->
+    <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+
+            <!-- Dashboard -->
+            <li class="nav-item">
+                <a href="/admin/dashboard" class="nav-link {{ 'active' if module =='dashboard' else '' }}">
+                    <span>
+                        <i class="bi bi-grid-1x2"></i>
+                        Dashboard
+                    </span>
+                </a>
+            </li>
+
+            <!-- User -->
+            <li class="nav-item">
+                <a href="/admin/users" class="nav-link {{ 'active' if module =='users' else '' }}">
+                    <span>
+                        <i class="bi bi-people"></i>
+                        User Management
+                    </span>
+                </a>
+            </li>
+
+            <!-- Product Menu -->
+            <li class="nav-item">
+                <a href="#productMenu"
+                   class="nav-link"
+                   data-bs-toggle="collapse">
+                    <span>
+                        <i class="bi bi-box-seam"></i>
+                        Product Management
+                    </span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+
+                <div class="collapse" id="productMenu">
+                    <ul class="nav flex-column">
+                        <li>
+                            <a href="" class="nav-link">
+                                <i class="bi bi-box"></i>
+                                <span>Products</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="nav-link">
+                                <i class="bi bi-tags"></i>
+                                <span>Categories</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="nav-link">
+                                <i class="bi bi-boxes"></i>
+                                <span>Inventory</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item {{ 'active' if module =='setting' else '' }}">
+                <a href="" class="nav-link">
+                    <span>
+                        <i class="bi bi-gear"></i>
+                        Settings
+                    </span>
+                </a>
+            </li>
+
+            <li class="nav-item {{ 'active' if module =='store' else '' }}">
+                <a href="/" class="nav-link">
+                    <span>
+                        <i class="bi bi-shop"></i>
+                        View Store
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <!-- Logout -->
+    <div class="sidebar-footer">
+        <a href="" class="logout-link">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+</aside>

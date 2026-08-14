@@ -1,0 +1,37 @@
+@media(max-width:992px){
+
+    .admin-search{
+
+        width:100%;
+
+        margin:20px 0;
+
+    }
+
+}
+/* Sidebar */
+
+@media(max-width:992px){
+
+    .admin-sidebar{
+
+        display:none;
+
+    }
+
+}
+/* Footer */
+
+@media(max-width:768px){
+
+    .admin-footer .d-flex{
+
+        flex-direction:column;
+
+        gap:10px;
+
+        text-align:center;
+
+    }
+
+}

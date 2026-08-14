@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Beauté Studio | Admin Dashboard</title>
+    {% include 'admin/includes/styles.html' %}
+</head>
+
+<body>
+
+<div class="admin-wrapper">
+
+    <!-- Navbar -->
+    {% include 'admin/includes/navbar.html' %}
+
+    <!-- Content -->
+    <div class="admin-content">
+
+        <!-- Sidebar -->
+        {% include 'admin/includes/sidebar.html' %}
+
+        <!-- Main -->
+        <main class="admin-main">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+    </div>
+    <!-- Footer -->
+    {% include 'admin/includes/footer.html' %}
+
+</div>
+
+{% include 'admin/share/scripts.html' %}
+
+</body>
+
+</html>

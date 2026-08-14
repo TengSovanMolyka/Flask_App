@@ -1,0 +1,24 @@
+/* Main Content Wrapper */
+.admin-content {
+    margin-left: 260px;   /* Sidebar width */
+    margin-top: 77px;     /* Navbar height */
+    padding: 1.5rem;
+    min-height: calc(100vh - 77px - 50px); /* full height minus navbar & footer */
+    background-color: #e1e1e1; /* light background for contrast */
+}
+
+/* Cards */
+.admin-content .card {
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/*.admin-content .card:hover {*/
+/*    transform: translateY(-3px);*/
+/*    box-shadow: 0 4px 12px rgba(0,0,0,0.1);*/
+/*}*/
+
+/* Headings */
+.admin-content h2 {
+    color: #2a2a3d;
+}
