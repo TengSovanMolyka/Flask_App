@@ -1095,5 +1095,55 @@
     "shipping": 0,
     "total": 4788,
     "status": "Processing"
+  },
+  {
+    "order_id": 707680,
+    "customer_name": "Teng Sovanmolyka",
+    "phone": "+855312422228",
+    "email": "tengsovanmolyka@gmail.com",
+    "address": "No. 86A, Street 110\r\nRussian Federation Blvd (110), Phnom Penh",
+    "payment_method": "khqr",
+    "items": [
+      {
+        "_id": 1,
+        "title": "Long sleeve Jacket",
+        "category": "women",
+        "price": 150,
+        "qty": 45,
+        "size": "L",
+        "brand": "FashionTrend",
+        "image": "https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg",
+        "stock": 50,
+        "discountedPrice": 135
+      },
+      {
+        "_id": 3,
+        "title": "Compact fashion t-shirt",
+        "category": "women",
+        "price": 55.99,
+        "qty": 98,
+        "size": "S",
+        "brand": "TrendyTees",
+        "image": "https://images.pexels.com/photos/2752045/pexels-photo-2752045.jpeg",
+        "stock": 100,
+        "discountedPrice": 50.39
+      },
+      {
+        "_id": 14,
+        "title": "Clothes with bag",
+        "category": "kids",
+        "price": 50,
+        "qty": 58,
+        "size": "4T",
+        "brand": "KidsTrend",
+        "image": "https://images.pexels.com/photos/36029/aroni-arsa-children-little.jpg",
+        "stock": 80,
+        "discountedPrice": 45
+      }
+    ],
+    "subtotal": 13623.220000000001,
+    "shipping": 0,
+    "total": 13623.220000000001,
+    "status": "Processing"
   }
 ]

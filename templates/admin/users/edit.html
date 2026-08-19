@@ -68,11 +68,14 @@
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Role</label>
                     <select name="role" class="form-select">
-                        <option value="Owner" {% if user.role == "Owner" %}selected{% endif %}>
-                            Owner
+                        <option value="User" {% if user.role == "User" %}selected{% endif %}>
+                            User
                         </option>
                         <option value="Admin" {% if user.role == "Admin" %}selected{% endif %}>
                             Admin
+                        </option>
+                        <option value="Owner" {% if user.role == "Owner" %}selected{% endif %}>
+                            Owner
                         </option>
                     </select>
                 </div>

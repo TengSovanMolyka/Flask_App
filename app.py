@@ -782,9 +782,6 @@ class User(db.Model):
     role = db.Column(db.String(128), nullable=False, default='User')
     status = db.Column(db.String(50), nullable=False, default='Active')
 
-# with app.app_context():
-#     db.create_all()
-
 def get_user_form():
     return {
         "username": request.form.get("username"),
@@ -806,11 +803,9 @@ def get_user_form():
     #     status=status
     # )
 
-
 # Upload profile image
 def upload_profile(profile):
     filename = "profile-avatar.png"
-
     if profile and profile.filename:
         filename = secure_filename(profile.filename)
         # Upload folder
