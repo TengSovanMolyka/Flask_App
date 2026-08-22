@@ -1,0 +1,306 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <a
+            href="{{ url_for('admin_orders.index') }}"
+            class="text-decoration-none"
+        >
+            ← Back to Orders
+        </a>
+
+        <h2 class="fw-bold mt-3">
+            Order {{ order.order_id }}
+        </h2>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- ==========================================
+             CUSTOMER
+        =========================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Customer Information
+                    </h5>
+
+                    <p>
+                        <strong>Name:</strong>
+                        {{ order.customer_name }}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ order.email }}
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        {{ order.phone }}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Address:</strong>
+                        {{ order.address }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             PAYMENT
+        =========================================== -->
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Payment Information
+                    </h5>
+
+                    <p>
+                        <strong>Payment Method:</strong>
+                        {{ order.payment_method }}
+                    </p>
+
+                    <p>
+                        <strong>Subtotal:</strong>
+                        ${{ "%.2f"|format(order.subtotal) }}
+                    </p>
+
+                    <p>
+                        <strong>Shipping:</strong>
+                        ${{ "%.2f"|format(order.shipping) }}
+                    </p>
+
+                    <p class="fs-5">
+                        <strong>Total:</strong>
+                        ${{ "%.2f"|format(order.total) }}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             ORDER ITEMS
+        =========================================== -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-4">
+                        Order Items
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table align-middle">
+
+                            <thead>
+
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                            {% for item in order.items %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="d-flex align-items-center gap-3">
+
+                                            {% if item.image %}
+
+                                                <img
+                                                    src="{{ url_for(
+                                                        'static',
+                                                        filename=item.image
+                                                    ) }}"
+                                                    width="50"
+                                                    height="50"
+                                                    class="rounded object-fit-cover"
+                                                >
+
+                                            {% endif %}
+
+                                            <span>
+                                                {{ item.title }}
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+                                        {{ item.size or "-" }}
+                                    </td>
+
+                                    <td>
+                                        ${{ "%.2f"|format(
+                                            item.discounted_price
+                                        ) }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.quantity }}
+                                    </td>
+
+                                    <td>
+                                        ${{ "%.2f"|format(
+                                            item.line_total
+                                        ) }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             STATUS
+        =========================================== -->
+
+        <div class="col-12">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Order Status
+                    </h5>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'admin_orders.update_status',
+                            order_id=order.order_id
+                        ) }}"
+                    >
+
+                        <div class="row g-3 align-items-end">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Status
+                                </label>
+
+                                <select
+                                    name="status"
+                                    class="form-select"
+                                >
+
+                                    <option
+                                        value="Processing"
+                                        {% if order.status == "Processing" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        Processing
+                                    </option>
+
+                                    <option
+                                        value="Shipped"
+                                        {% if order.status == "Shipped" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        Shipped
+                                    </option>
+
+                                    <option
+                                        value="Delivered"
+                                        {% if order.status == "Delivered" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        Delivered
+                                    </option>
+
+                                    <option
+                                        value="Cancelled"
+                                        {% if order.status == "Cancelled" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        Cancelled
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100"
+                                >
+                                    Update Status
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

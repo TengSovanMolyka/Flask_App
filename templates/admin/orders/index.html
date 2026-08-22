@@ -1,0 +1,151 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Orders
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage customer orders
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for order in orders %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ order.order_id }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ order.customer_name }}
+                            </td>
+
+                            <td>
+                                {{ order.email }}
+                            </td>
+
+                            <td>
+                                ${{ "%.2f"|format(order.total) }}
+                            </td>
+
+                            <td>
+
+                                {% if order.status == "Processing" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Processing
+                                    </span>
+
+                                {% elif order.status == "Shipped" %}
+
+                                    <span class="badge bg-info">
+                                        Shipped
+                                    </span>
+
+                                {% elif order.status == "Delivered" %}
+
+                                    <span class="badge bg-success">
+                                        Delivered
+                                    </span>
+
+                                {% elif order.status == "Cancelled" %}
+
+                                    <span class="badge bg-danger">
+                                        Cancelled
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ order.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'admin_orders.detail',
+                                        order_id=order.order_id
+                                    ) }}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    View
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center py-5 text-muted"
+                            >
+                                No orders found.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
