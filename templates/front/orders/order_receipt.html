@@ -44,9 +44,9 @@
           <tr>
             <td>{{ item.title }}</td>
             <td>{{ item.size }}</td>
-            <td>{{ item.qty }}</td>
-            <td>${{ "%.2f"|format(item.discountedPrice) }}</td>
-            <td>${{ "%.2f"|format(item.discountedPrice * item.qty) }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ "%.2f"|format(item.discounted_price) }}</td>
+            <td>${{ "%.2f"|format(item.discounted_price * item.quantity) }}</td>
           </tr>
           {% endfor %}
         </tbody>

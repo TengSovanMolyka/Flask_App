@@ -157,7 +157,7 @@ def upload_profile():
     filepath = os.path.join(upload_folder, filename)
 
     # Delete old profile image
-    old_profile = user.profile
+    old_profile = user.profile_image
     if old_profile and old_profile != "default-avatar.png" and old_profile != filename:
         old_path = os.path.join(upload_folder, old_profile)
         if os.path.exists(old_path):
@@ -170,7 +170,7 @@ def upload_profile():
     file.save(filepath)
 
     # Update user profile
-    user.profile = filename
+    user.profile_image = filename
     db.session.commit()
 
     flash("Profile image updated successfully!", "success")

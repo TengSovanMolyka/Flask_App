@@ -27,34 +27,23 @@
                aria-expanded="false">
 
                 <!-- Avatar -->
-                <img src="{{ url_for('static', filename='uploads/profile/ari.jpg') }}"
+                <img src="{% if session.get('admin_profile') %}
+                            {{ url_for('static', filename='uploads/profile/' ~ session.get('admin_profile')) }}
+                          {% else %}
+                            {{ url_for('static', filename='uploads/profile/default-avatar.png') }}
+                          {% endif %}"
                      alt="Admin Avatar"
                      class="admin-avatar">
 
                 <!-- User Info -->
                 <div class="ms-2">
-                    <div class="fw-semibold">Monica</div>
-                    <small class="text-muted">Administrator</small>
+                    <div class="fw-semibold">
+                        {{ session.get('admin_username', 'Admin') }}
+                    </div>
+                    <small class="text-muted">
+                        {{ session.get('admin_role', 'Administrator') }}
+                    </small>
                 </div>
-
-{#                <!-- Avatar -->#}
-{#                <img src="{% if session.get('user_profile') %}#}
-{#                            {{ url_for('static', filename='uploads/profile/' ~ session.get('user_profile')) }}#}
-{#                          {% else %}#}
-{#                            {{ url_for('static', filename='uploads/profile/profile-avatar.png') }}#}
-{#                          {% endif %}"#}
-{#                     alt="Admin Avatar"#}
-{#                     class="admin-avatar">#}
-{##}
-{#                <!-- User Info -->#}
-{#                <div class="ms-2">#}
-{#                    <div class="fw-semibold">#}
-{#                        {{ session.get('username', 'Guest') }}#}
-{#                    </div>#}
-{#                    <small class="text-muted">#}
-{#                        {{ session.get('role', 'User') }}#}
-{#                    </small>#}
-{#                </div>#}
             </a>
 
             <!-- Dropdown Menu -->
@@ -70,8 +59,10 @@
                     </a>
                 </li>
                 <li><hr class="dropdown-divider"></li>
+
+                <!-- Logout -->
                 <li>
-                    <a class="dropdown-item text-danger" href="/">
+                    <a class="dropdown-item text-danger" href="{{ url_for('admin_auth.logout') }}">
                         <i class="bi bi-box-arrow-right me-3"></i> Logout
                     </a>
                 </li>

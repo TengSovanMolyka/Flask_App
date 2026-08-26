@@ -23,18 +23,16 @@
         <div class="text-center p-4 bg-light">
           <form method="POST" action="/upload-profile" enctype="multipart/form-data">
             <div class="position-relative d-inline-block">
-              {% if user.profile_image %}
-                <img src="{{ url_for('static', filename='uploads/profile/' + user.profile_image) }}"
-                     class="rounded-circle border"
-                     width="120" height="120"
-                     style="object-fit:cover;">
-              {% else %}
-                <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center"
-                     style="width:120px;height:120px;font-size:36px;font-weight:700;">
-                  {{ user.username[:2]|upper }}
-                </div>
-              {% endif %}
-
+            <!-- Profile Image -->
+                <img src="{% if user.profile_image %}
+                            {{ url_for('static', filename='uploads/profile/' + user.profile_image) }}
+                          {% else %}
+                            {{ url_for('static', filename='uploads/profile/profile-avatar.png') }}
+                          {% endif %}"
+                     alt="Profile Image" class="rounded-circle border"
+                     width="120" height="120" style="object-fit:cover;"
+                     onerror="this.src='{{ url_for('static',filename='uploads/profile/profile-avatar.png') }}'"
+                >
               <label class="bg-dark text-white rounded-circle position-absolute bottom-0 end-0 d-flex align-items-center justify-content-center shadow"
                      style="width:40px;height:40px;cursor:pointer;">
                 <i class="bi bi-camera"></i>
@@ -63,7 +61,7 @@
         <div class="p-3">
           <h6 class="fw-bold text-uppercase text-muted mb-3">Account Menu</h6>
           <div class="list-group list-group-flush">
-            <a href="/account" class="list-group-item list-group-item-action border-0">
+            <a href="/admin/dashboard/" class="list-group-item list-group-item-action border-0">
               <i class="bi bi-grid me-2"></i> Dashboard
             </a>
             <a href="/orders" class="list-group-item list-group-item-action border-0">
@@ -118,7 +116,7 @@
             </div>
             <div class="col-md-6">
               <label class="text-muted small">Phone</label>
-              <div class="fw-semibold">{{ user.phone or 'Not Provided' }}</div>
+              <div class="fw-semibold">{{ user.contact or 'Not Provided' }}</div>
             </div>
             <div class="col-12">
               <label class="text-muted small">Address</label>
@@ -181,7 +179,7 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Phone</label>
-              <input type="text" name="phone" class="form-control" value="{{ user.phone }}">
+              <input type="text" name="phone" class="form-control" value="{{ user.contact }}">
             </div>
             <div class="col-12">
               <label class="form-label">Address</label>

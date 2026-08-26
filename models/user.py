@@ -5,7 +5,7 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    profile = db.Column(db.String(128), nullable=True, default="default-avatar.png")
+    profile_image = db.Column(db.String(128), nullable=True, default="default-avatar.png")
     full_name = db.Column(db.String(128), nullable=True)
     username = db.Column(db.String(128), unique=True, nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)

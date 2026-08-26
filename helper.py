@@ -1,10 +1,9 @@
-import json
-import os
+import json, os, requests
+from config import Config
 from flask import current_app, request
 from werkzeug.utils import secure_filename
 from product import get_product_by_id
 
-import requests
 
 def send_order_to_telegram(order):
     """Send a newly-created SQLAlchemy Order to Telegram."""
