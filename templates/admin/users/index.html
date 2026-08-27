@@ -43,6 +43,7 @@
                             <img src="{{ url_for('static', filename='uploads/profile/' ~ (user.profile_image or 'default-avatar.png') )}}"
                                  alt="{{ user.username }}"
                                  class="rounded-circle border"
+                                 style="width: 45px; height: 45px; object-fit: cover;"
                                  onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/profile/default-avatar.png') }}';"
                             >
 {#                            <img src="{% if user.profile_image %}#}
