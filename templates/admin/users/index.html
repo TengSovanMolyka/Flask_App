@@ -40,16 +40,21 @@
                         <td>{{ user.id }}</td>
                         <!-- Profile Image -->
                         <td class="text-center">
-                            <img src="{% if user.profile_image %}
-                                        {{ url_for('static', filename='uploads/profile/' ~ user.profile_image) }}
-                                    {% else %}
-                                        {{ url_for('static', filename='uploads/profile/default-avatar.png') }}
-                                    {% endif %}"
+                            <img src="{{ url_for('static', filename='uploads/profile/' ~ (user.profile_image or 'default-avatar.png') )}}"
                                  alt="{{ user.username }}"
                                  class="rounded-circle border"
-                                 style="width: 45px; height: 45px; object-fit: cover;"
-                                 onerror="this.src='{{ url_for('static', filename='uploads/profile/profile-avatar.png') }}'"
+                                 onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/profile/default-avatar.png') }}';"
                             >
+{#                            <img src="{% if user.profile_image %}#}
+{#                                        {{ url_for('static', filename='uploads/profile/' ~ user.profile_image) }}#}
+{#                                    {% else %}#}
+{#                                        {{ url_for('static', filename='uploads/profile/default-avatar.png') }}#}
+{#                                    {% endif %}"#}
+{#                                 alt="{{ user.username }}"#}
+{#                                 class="rounded-circle border"#}
+{#                                 style="width: 45px; height: 45px; object-fit: cover;"#}
+{#                                 onerror="this.src='{{ url_for('static', filename='uploads/profile/profile-avatar.png') }}'"#}
+{#                            >#}
                         </td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
