@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La Beauté Studio | Wishlist</title>
+  {% include 'front/styles.html' %}
+</head>
+
+<body>
+
+{% include 'front/share/navbar.html' %}
+
+<!-- ==========================
+     WISHLIST
+========================== -->
+<section class="container py-5">
+
+  <!-- PAGE HEADER -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">
+        <i class="bi bi-heart-fill text-danger me-2"></i>
+        My Wishlist
+      </h2>
+      <p class="text-muted mb-0">Save your favorite products and shop them later.</p>
+    </div>
+
+    {% if wishlist %}
+    <span class="badge bg-dark rounded-pill px-3 py-2">
+      {{ wishlist|length }} item{% if wishlist|length != 1 %}s{% endif %}
+    </span>
+    {% endif %}
+  </div>
+
+  <!-- WISHLIST PRODUCTS -->
+  {% if wishlist %}
+  <div class="row g-4">
+    {% for product in wishlist %}
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 d-flex flex-column wishlist-card">
+
+        <!-- PRODUCT IMAGE -->
+        <div class="position-relative bg-light">
+          <a href="{{ url_for('front.product', id=product['_id']) }}">
+            <img src="{{ product['image'] }}"
+                 alt="{{ product['title'] }}"
+                 class="w-100"
+                 style="height:220px; object-fit:cover;">
+          </a>
+
+          <!-- REMOVE -->
+          <form method="POST"
+                action="{{ url_for('front.remove_from_wishlist', product_id=product['_id']) }}"
+                class="position-absolute top-0 end-0 m-2">
+            <button type="submit"
+                    class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                    style="width:40px;height:40px;"
+                    title="Remove from wishlist">
+              <i class="bi bi-heart-fill text-danger"></i>
+            </button>
+          </form>
+
+          <!-- NEW BADGE -->
+          {% if product['isNew'] %}
+          <span class="position-absolute top-0 start-0 m-2 badge bg-dark">NEW</span>
+          {% endif %}
+        </div>
+
+        <!-- PRODUCT INFORMATION -->
+        <div class="card-body p-3 d-flex flex-column flex-grow-1">
+          <small class="text-muted mb-1">{{ product['category'] }}</small>
+          <h5 class="fw-bold mb-2">
+            <a href="{{ url_for('front.product', id=product['_id']) }}"
+               class="text-decoration-none text-dark">
+              {{ product['title'] }}
+            </a>
+          </h5>
+
+          <!-- PRICE -->
+          <div class="mb-3">
+            {% if product['discountedPrice'] < product['price'] %}
+            <span class="fw-bold text-danger fs-5">
+              ${{ "%.2f"|format(product['discountedPrice']) }}
+            </span>
+            <small class="text-muted text-decoration-line-through ms-1">
+              ${{ "%.2f"|format(product['price']) }}
+            </small>
+            {% else %}
+            <span class="fw-bold fs-5">
+              ${{ "%.2f"|format(product['price']) }}
+            </span>
+            {% endif %}
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="mt-auto d-flex gap-2">
+            <!-- VIEW PRODUCT -->
+            <a href="{{ url_for('front.product', id=product['_id']) }}"
+               class="btn btn-outline-dark rounded-pill flex-grow-1">
+              <i class="bi bi-eye me-1"></i> View
+            </a>
+
+            <!-- ADD TO CART -->
+            <form method="POST"
+                  action="{{ url_for('cart.add_to_cart') }}"
+                  class="flex-grow-1">
+              <input type="hidden" name="product_id" value="{{ product['_id'] }}">
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="size" value="{{ product['size'][0] }}">
+              <button type="submit" class="btn btn-dark rounded-pill w-100">
+                <i class="bi bi-cart-plus me-1"></i> Cart
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- CONTINUE SHOPPING -->
+  <div class="text-center mt-5">
+    <a href="{{ url_for('front.products') }}"
+       class="btn btn-outline-dark rounded-pill px-4">
+      <i class="bi bi-arrow-left me-2"></i> Continue Shopping
+    </a>
+  </div>
+
+  {% else %}
+  <!-- EMPTY WISHLIST -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body text-center py-5">
+      <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle mb-4"
+           style="width:100px;height:100px;">
+        <i class="bi bi-heart fs-1 text-danger"></i>
+      </div>
+      <h3 class="fw-bold">Your Wishlist is Empty</h3>
+      <p class="text-muted mb-4">
+        You haven't saved any products yet. Start exploring our collection and save your favorites.
+      </p>
+      <a href="{{ url_for('front.products') }}"
+         class="btn btn-dark rounded-pill px-4">
+        <i class="bi bi-bag me-2"></i> Explore Products
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+{% include 'front/share/footer.html' %}
+
+<style>
+  .wishlist-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .wishlist-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10) !important;
+  }
+  .wishlist-card img {
+    transition: transform 0.3s ease;
+  }
+  .wishlist-card:hover img {
+    transform: scale(1.03);
+  }
+  .wishlist-card h5 a:hover {
+    text-decoration: underline !important;
+  }
+</style>
+
+</body>
+</html>

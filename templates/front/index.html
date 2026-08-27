@@ -55,6 +55,21 @@
             {% for product in products[:6] %}
                 <div class="col-md-6 col-lg-4">
                     <div class="card product-card border-0 shadow-sm h-100">
+                        <!-- FAVORITE BUTTON -->
+                        <form method="POST"
+                              action="{{ url_for('front.toggle_wishlist', product_id=product['_id']) }}"
+                              class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+                            <button type="submit"
+                                    class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                    style="width:42px; height:42px; line-height:1;"
+                                    title="Add to Wishlist">
+                                {% if product._id|string in session.get('wishlist', [])|map('string')|list %}
+                                    <i class="bi bi-heart-fill text-danger fs-5 d-flex align-items-center justify-content-center"></i>
+                                {% else %}
+                                    <i class="bi bi-heart fs-5 d-flex align-items-center justify-content-center"></i>
+                                {% endif %}
+                            </button>
+                        </form>
 
                         <img src="{{ product.image }}"
                              class="card-img-top"

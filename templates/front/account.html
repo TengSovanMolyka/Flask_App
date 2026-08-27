@@ -128,25 +128,49 @@
 
       <!-- STATS -->
       <div class="row g-4">
+        <!-- TOTAL ORDERS -->
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
-            <i class="bi bi-box-seam fs-1 mb-2"></i>
-            <h3>{{ orders|length }}</h3>
-            <small class="text-muted">Orders</small>
+          <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center">
+            <div class="card-body p-4 text-center">
+              <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle"
+                      style="width:60px; height:60px;">
+                <i class="bi bi-box-seam fs-3"></i>
+                </span>
+              </div>
+              <h2 class="fw-bold mb-1">{{ total_orders|length }}</h2>
+              <p class="text-muted mb-3">Total Orders</p>
+            </div>
           </div>
         </div>
+        <!-- TACTIVE ORDERS -->
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
-            <i class="bi bi-cart-check fs-1 mb-2"></i>
-            <h3>{{ active_orders|length if active_orders else 0 }}</h3>
-            <small class="text-muted">Active</small>
+          <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center">
+            <div class="card-body p-4 text-center">
+              <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle"
+                      style="width:60px; height:60px;">
+                <i class="bi bi-truck fs-3"></i>
+                </span>
+              </div>
+              <h2 class="fw-bold mb-1">{{ active_orders|length if active_orders else 0 }}</h2>
+              <p class="text-muted mb-3">Active Orders</p>
+            </div>
           </div>
         </div>
+        <!-- WISHLIST -->
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
-            <i class="bi bi-heart fs-1 mb-2"></i>
-            <h3>{{ saved_items|length if saved_items else 0 }}</h3>
-            <small class="text-muted">Wishlist</small>
+          <div class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center">
+            <div class="card-body p-4 text-center">
+              <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded-circle"
+                      style="width:60px; height:60px;">
+                <i class="bi bi-heart-fill fs-3"></i>
+                </span>
+              </div>
+              <h2 class="fw-bold mb-1">{{ wishlist_count }}</h2>
+              <p class="text-muted mb-3">Wishlist Items</p>
+            </div>
           </div>
         </div>
       </div>

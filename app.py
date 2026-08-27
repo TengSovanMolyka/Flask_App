@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, session
 from config import Config
 from extensions import db, migrate
 
@@ -31,6 +31,18 @@ def create_app():
     # ==========================================
     app.config.from_object(Config)
 
+    # ==================================================
+    # WISHLIST COUNT
+    # ==================================================
+
+    @app.context_processor
+    def inject_wishlist_count():
+        wishlist = session.get("wishlist", [])
+
+        return {
+            "wishlist_count": len(wishlist)
+        }
+
     # ==========================================
     # Extensions
     # ==========================================
@@ -51,6 +63,7 @@ def create_app():
     app.register_blueprint(account_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(orders_bp)
+
 
 
     # ==========================================

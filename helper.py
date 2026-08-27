@@ -84,8 +84,6 @@ Thank you for your order.
         print("Telegram Error:", e)
         return False
 
-
-
 # ==========================================================
 # FILE UPLOAD
 # ==========================================================
@@ -208,3 +206,4 @@ def get_cart_data() -> dict:
         "total_items": total_items,
         "shipping": shipping,
     }
+
