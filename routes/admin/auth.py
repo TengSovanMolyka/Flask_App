@@ -5,7 +5,7 @@ from flask import (
     redirect,
     url_for,
     session,
-    flash
+    flash,
 )
 
 from functools import wraps
@@ -17,11 +17,10 @@ from models.user import User
 # ==========================================================
 # ADMIN AUTH BLUEPRINT
 # ==========================================================
-
 admin_auth_bp = Blueprint(
     "admin_auth",
     __name__,
-    url_prefix="/admin/auth"
+    url_prefix="/admin/auth",
 )
 
 
@@ -37,13 +36,14 @@ def login_required(view):
             return redirect(
                 url_for(
                     "admin_auth.login",
-                    next=request.path
+                    next=request.path,
                 )
             )
 
         return view(*args, **kwargs)
 
     return wrapped
+
 
 # ==========================================================
 # ADMIN LOGIN
@@ -68,7 +68,7 @@ def login():
         if not user:
             flash(
                 "Invalid username or password.",
-                "danger"
+                "danger",
             )
             return redirect(
                 url_for("admin_auth.login")
@@ -77,7 +77,7 @@ def login():
         if user.role != "Admin":
             flash(
                 "You do not have administrator access.",
-                "danger"
+                "danger",
             )
             return redirect(
                 url_for("admin_auth.login")
@@ -86,7 +86,7 @@ def login():
         if user.status != "Active":
             flash(
                 "Your admin account is not active.",
-                "danger"
+                "danger",
             )
             return redirect(
                 url_for("admin_auth.login")
@@ -94,11 +94,11 @@ def login():
 
         if not check_password_hash(
             user.password,
-            password
+            password,
         ):
             flash(
                 "Invalid username or password.",
-                "danger"
+                "danger",
             )
             return redirect(
                 url_for("admin_auth.login")
@@ -107,7 +107,6 @@ def login():
         # ==============================================
         # LOGIN SUCCESS
         # ==============================================
-
         session.clear()
 
         session["admin_id"] = user.id
@@ -123,10 +122,10 @@ def login():
         "admin/auth/login.html"
     )
 
+
 # ==========================================================
 # ADMIN LOGOUT
 # ==========================================================
-
 @admin_auth_bp.route("/logout")
 def logout():
 

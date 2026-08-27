@@ -50,8 +50,13 @@
                     </a>
 
                     <!-- Favorite -->
-                    <a href="/wishlist" class="btn btn-light">
+                    <a href="/wishlist" class="btn btn-light position-relative">
                         <i class="fas fa-heart"></i>
+                        {% if wishlist_count > 0 %}
+                        <span class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ wishlist_count }}
+                        </span>
+                        {% endif %}
                     </a>
 
                     <!-- User -->
