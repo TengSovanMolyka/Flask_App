@@ -15,7 +15,7 @@ from models.user import User
 
 
 # ==========================================================
-# ADMIN AUTH BLUEPRINT
+# ADMIN / DASHBOARD AUTH BLUEPRINT
 # ==========================================================
 admin_auth_bp = Blueprint(
     "admin_auth",
@@ -25,14 +25,16 @@ admin_auth_bp = Blueprint(
 
 
 # ==========================================================
-# ADMIN LOGIN REQUIRED
+# LOGIN REQUIRED
+# ==========================================================
+# Admin AND User can access routes protected by this decorator.
 # ==========================================================
 def login_required(view):
 
     @wraps(view)
     def wrapped(*args, **kwargs):
 
-        if not session.get("admin_id"):
+        if not session.get("user_id"):
             return redirect(
                 url_for(
                     "admin_auth.login",
@@ -46,12 +48,48 @@ def login_required(view):
 
 
 # ==========================================================
-# ADMIN LOGIN
+# ADMIN REQUIRED
+# ==========================================================
+# ONLY Admin can access routes protected by this decorator.
+# ==========================================================
+def admin_required(view):
+
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+
+        # Not logged in
+        if not session.get("user_id"):
+            return redirect(
+                url_for(
+                    "admin_auth.login",
+                    next=request.path,
+                )
+            )
+
+        # Logged in but not Admin
+        if session.get("user_role") != "Admin":
+            flash(
+                "You do not have permission to access this page.",
+                "danger",
+            )
+
+            return redirect(
+                url_for("admin_dashboard.dashboard")
+            )
+
+        return view(*args, **kwargs)
+
+    return wrapped
+
+
+# ==========================================================
+# LOGIN
 # ==========================================================
 @admin_auth_bp.route("/login", methods=["GET", "POST"])
 def login():
 
-    if session.get("admin_id"):
+    # Already logged in
+    if session.get("user_id"):
         return redirect(
             url_for("admin_dashboard.dashboard")
         )
@@ -61,6 +99,9 @@ def login():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
 
+        # --------------------------------------------------
+        # FIND USER
+        # --------------------------------------------------
         user = User.query.filter_by(
             username=username
         ).first()
@@ -70,28 +111,27 @@ def login():
                 "Invalid username or password.",
                 "danger",
             )
+
             return redirect(
                 url_for("admin_auth.login")
             )
 
-        if user.role != "Admin":
-            flash(
-                "You do not have administrator access.",
-                "danger",
-            )
-            return redirect(
-                url_for("admin_auth.login")
-            )
-
+        # --------------------------------------------------
+        # CHECK ACCOUNT STATUS
+        # --------------------------------------------------
         if user.status != "Active":
             flash(
-                "Your admin account is not active.",
+                "Your account is not active.",
                 "danger",
             )
+
             return redirect(
                 url_for("admin_auth.login")
             )
 
+        # --------------------------------------------------
+        # CHECK PASSWORD
+        # --------------------------------------------------
         if not check_password_hash(
             user.password,
             password,
@@ -100,19 +140,37 @@ def login():
                 "Invalid username or password.",
                 "danger",
             )
+
             return redirect(
                 url_for("admin_auth.login")
             )
 
-        # ==============================================
+        # ==================================================
         # LOGIN SUCCESS
-        # ==============================================
+        # ==================================================
         session.clear()
 
+        # General user information
+        session["user_id"] = user.id
+        session["user_username"] = user.username
+        session["user_role"] = user.role
+        session["user_profile"] = user.profile_image
+
+        # --------------------------------------------------
+        # Keep admin session names for your existing navbar
+        # --------------------------------------------------
         session["admin_id"] = user.id
         session["admin_username"] = user.username
         session["admin_role"] = user.role
         session["admin_profile"] = user.profile_image
+
+        # --------------------------------------------------
+        # Redirect to dashboard
+        # --------------------------------------------------
+        next_page = request.args.get("next")
+
+        if next_page:
+            return redirect(next_page)
 
         return redirect(
             url_for("admin_dashboard.dashboard")
@@ -124,7 +182,7 @@ def login():
 
 
 # ==========================================================
-# ADMIN LOGOUT
+# LOGOUT
 # ==========================================================
 @admin_auth_bp.route("/logout")
 def logout():

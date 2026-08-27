@@ -15,7 +15,7 @@ from werkzeug.security import generate_password_hash
 
 from extensions import db
 from models.user import User
-from .auth import login_required
+from .auth import admin_required
 
 
 # ==========================================================
@@ -62,7 +62,7 @@ def upload_profile(profile):
 # ADMIN USERS
 # ==========================================================
 @admin_users_bp.get("/users")
-@login_required
+@admin_required
 def users():
     rows = User.query.all()
     return render_template(
@@ -76,7 +76,7 @@ def users():
 # ADD USER
 # ==========================================================
 @admin_users_bp.route("/users/add", methods=["GET", "POST"])
-@login_required
+@admin_required
 def add_user():
     if request.method == "POST":
         data = get_user_form()
@@ -108,7 +108,7 @@ def add_user():
 # EDIT USER
 # ==========================================================
 @admin_users_bp.route("/users/edit/<int:user_id>", methods=["GET", "POST"])
-@login_required
+@admin_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
 
@@ -146,7 +146,7 @@ def edit_user(user_id):
 # DELETE USER
 # ==========================================================
 @admin_users_bp.route("/users/delete/<int:user_id>", methods=["GET", "POST"])
-@login_required
+@admin_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
 

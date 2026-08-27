@@ -21,15 +21,17 @@
                 </a>
             </li>
 
+            {% if session.get("user_role") == "Admin" %}
             <!-- User -->
             <li class="nav-item">
-                <a href="/admin/users" class="nav-link {{ 'active' if module =='users' else '' }}">
+                <a href="{{ url_for('admin_users.users') }}" class="nav-link">
                     <span>
                         <i class="bi bi-people"></i>
                         User Management
                     </span>
                 </a>
             </li>
+            {% endif %}
 
             <!-- Product Menu -->
             <li class="nav-item">
