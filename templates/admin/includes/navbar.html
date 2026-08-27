@@ -27,13 +27,11 @@
                aria-expanded="false">
 
                 <!-- Avatar -->
-                <img src="{% if session.get('admin_profile') %}
-                            {{ url_for('static', filename='uploads/profile/' ~ session.get('admin_profile')) }}
-                          {% else %}
-                            {{ url_for('static', filename='uploads/profile/default-avatar.png') }}
-                          {% endif %}"
+                <img src="{{ url_for('static', filename='uploads/profile/' ~ (session.get('admin_profile') or 'default-avatar.png') )}}"
                      alt="Admin Avatar"
-                     class="admin-avatar">
+                     class="admin-avatar"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/profile/default-avatar.png') }}';"
+                >
 
                 <!-- User Info -->
                 <div class="ms-2">
