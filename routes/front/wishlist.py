@@ -21,7 +21,7 @@ def wishlist():
 
     if not user_id:
         flash("Please login to view your wishlist.", "warning")
-        return redirect(url_for("front.login"))
+        return redirect(url_for("auth.login"))
 
     wishlist_ids = session.get("wishlist", [])
 
@@ -108,7 +108,7 @@ def remove_from_wishlist(product_id):
 
     if not user_id:
         flash("Please login first.", "warning")
-        return redirect(url_for("front.login"))
+        return redirect(url_for("auth.login"))
 
     wishlist = [
         int(item)
@@ -139,7 +139,7 @@ def clear_wishlist():
     user_id = session.get("user_id")
 
     if not user_id:
-        return redirect(url_for("front.login"))
+        return redirect(url_for("auth.login"))
 
     session["wishlist"] = []
     session.modified = True
