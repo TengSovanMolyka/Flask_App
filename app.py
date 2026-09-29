@@ -18,6 +18,7 @@ from routes.front import (
 
 from routes.admin import (
     admin_users_bp,
+    admin_products_bp,
     admin_orders_bp,
     admin_auth_bp,
     admin_dashboard_bp,
@@ -76,6 +77,7 @@ def create_app():
     app.register_blueprint(admin_auth_bp)
     app.register_blueprint(admin_dashboard_bp)
     app.register_blueprint(admin_users_bp)
+    app.register_blueprint(admin_products_bp)
     app.register_blueprint(admin_orders_bp)
 
 

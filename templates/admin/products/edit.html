@@ -1,0 +1,270 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+
+<h2 class="fw-bold mb-4 text-uppercase">Edit Product</h2>
+
+<div class="card shadow-sm border-0">
+
+
+<!-- Card Header -->
+<div class="card-header">
+    <span class="fw-semibold">
+        <i class="bi bi-pencil-square"></i>
+        Update Product Information
+    </span>
+</div>
+
+<!-- Card Body -->
+<div class="card-body">
+
+    <form method="POST"
+          action="{{ url_for('admin_products.edit_product', product_id=product.id) }}"
+          enctype="multipart/form-data">
+
+        <div class="row">
+
+            <!-- Product Title -->
+            <div class="col-md-8 mb-3">
+                <label class="form-label fw-semibold">
+                    Product Title
+                </label>
+
+                <input type="text"
+                       name="title"
+                       class="form-control"
+                       value="{{ product.title }}"
+                       required>
+            </div>
+
+            <!-- New Product -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold d-block">
+                    Product Status
+                </label>
+
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="is_new"
+                           id="is_new"
+                           {% if product.is_new %}checked{% endif %}>
+
+                    <label class="form-check-label" for="is_new">
+                        Mark as New Product
+                    </label>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Category
+                </label>
+
+                <input type="text"
+                       name="category"
+                       class="form-control"
+                       value="{{ product.category }}"
+                       required>
+            </div>
+
+            <!-- Type -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Product Type
+                </label>
+
+                <input type="text"
+                       name="type"
+                       class="form-control"
+                       value="{{ product.type }}"
+                       required>
+            </div>
+
+            <!-- Brand -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Brand
+                </label>
+
+                <input type="text"
+                       name="brand"
+                       class="form-control"
+                       value="{{ product.brand or '' }}">
+            </div>
+
+            <!-- Stock -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Stock
+                </label>
+
+                <input type="number"
+                       name="stock"
+                       class="form-control"
+                       value="{{ product.stock }}"
+                       min="0"
+                       required>
+            </div>
+
+            <!-- Old Price -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">
+                    Old Price ($)
+                </label>
+
+                <input type="number"
+                       name="old_price"
+                       class="form-control"
+                       value="{{ product.old_price if product.old_price is not none else '' }}"
+                       min="0"
+                       step="0.01">
+            </div>
+
+            <!-- Price -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">
+                    Price ($)
+                </label>
+
+                <input type="number"
+                       name="price"
+                       class="form-control"
+                       value="{{ product.price }}"
+                       min="0"
+                       step="0.01"
+                       required>
+            </div>
+
+            <!-- Discounted Price -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label fw-semibold">
+                    Discounted Price ($)
+                </label>
+
+                <input type="number"
+                       name="discounted_price"
+                       class="form-control"
+                       value="{{ product.discounted_price if product.discounted_price is not none else '' }}"
+                       min="0"
+                       step="0.01">
+            </div>
+
+            <!-- Sizes -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Sizes
+                </label>
+
+                <input type="text"
+                       name="size"
+                       class="form-control"
+                       value="{{ product.size|join(', ') if product.size else '' }}"
+                       placeholder="Example: S, M, L, XL">
+
+                <small class="text-muted">
+                    Separate sizes with commas.
+                </small>
+            </div>
+
+            <!-- Rating -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">
+                    Rating
+                </label>
+
+                <input type="number"
+                       name="rating"
+                       class="form-control"
+                       value="{{ product.rating }}"
+                       min="0"
+                       max="5"
+                       step="0.1">
+            </div>
+
+            <!-- Description -->
+            <div class="col-12 mb-3">
+                <label class="form-label fw-semibold">
+                    Description
+                </label>
+
+                <textarea name="description"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Enter product description...">{{ product.description or '' }}</textarea>
+            </div>
+
+            <!-- Current Image -->
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label fw-semibold">
+                    Current Product Image
+                </label>
+
+                <div class="mb-2">
+
+                    {% if product.image %}
+
+                        <img src="{{ url_for('static', filename='uploads/products/' ~ product.image) }}"
+                             alt="{{ product.title }}"
+                             class="img-thumbnail"
+                             style="width: 150px; height: 150px; object-fit: cover;"
+                             onerror="this.style.display='none';">
+
+                    {% else %}
+
+                        <div class="border rounded p-4 text-muted">
+                            No image available
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <!-- New Image -->
+            <div class="col-md-6 mb-3">
+
+                <label class="form-label fw-semibold">
+                    Replace Product Image
+                </label>
+
+                <input type="file"
+                       name="image"
+                       class="form-control"
+                       accept=".jpg,.jpeg,.png,.gif,.webp">
+
+                <small class="text-muted">
+                    Leave empty to keep the current image.
+                </small>
+
+            </div>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-4">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                <i class="bi bi-save"></i>
+                Update Product
+            </button>
+
+            <a href="{{ url_for('admin_products.products') }}"
+               class="btn btn-secondary ms-2">
+                <i class="bi bi-arrow-left"></i>
+                Back to Products
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</div>
+
+{% endblock %}

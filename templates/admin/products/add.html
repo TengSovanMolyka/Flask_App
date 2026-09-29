@@ -1,0 +1,310 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-uppercase mb-1">Add Product</h2>
+        <p class="text-muted mb-0">
+            Create a new product for La Beauté Studio.
+        </p>
+    </div>
+
+    <a href="{{ url_for('admin_products.products') }}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Back to Products
+    </a>
+</div>
+
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-header">
+        <span class="fw-semibold">
+            <i class="bi bi-box-seam"></i>
+            Product Information
+        </span>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST"
+              action="{{ url_for('admin_products.add_product') }}"
+              enctype="multipart/form-data">
+
+            <!-- Product Name -->
+            <div class="mb-3">
+                <label for="title" class="form-label fw-semibold">
+                    Product Name
+                </label>
+
+                <input type="text"
+                       class="form-control"
+                       id="title"
+                       name="title"
+                       value="{{ request.form.get('title', '') }}"
+                       placeholder="Enter product name"
+                       required>
+            </div>
+
+
+            <div class="row">
+
+                <!-- Category -->
+                <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label fw-semibold">
+                        Category
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           id="category"
+                           name="category"
+                           value="{{ request.form.get('category', '') }}"
+                           placeholder="e.g. Dresses"
+                           required>
+                </div>
+
+
+                <!-- Type -->
+                <div class="col-md-6 mb-3">
+                    <label for="type" class="form-label fw-semibold">
+                        Type
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           id="type"
+                           name="type"
+                           value="{{ request.form.get('type', '') }}"
+                           placeholder="e.g. Clothing"
+                           required>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <!-- Brand -->
+                <div class="col-md-6 mb-3">
+                    <label for="brand" class="form-label fw-semibold">
+                        Brand
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           id="brand"
+                           name="brand"
+                           value="{{ request.form.get('brand', '') }}"
+                           placeholder="Enter brand">
+                </div>
+
+
+                <!-- Stock -->
+                <div class="col-md-6 mb-3">
+                    <label for="stock" class="form-label fw-semibold">
+                        Stock
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           id="stock"
+                           name="stock"
+                           value="{{ request.form.get('stock', '0') }}"
+                           min="0"
+                           placeholder="0"
+                           required>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <!-- Old Price -->
+                <div class="col-md-4 mb-3">
+                    <label for="old_price" class="form-label fw-semibold">
+                        Old Price
+                    </label>
+
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+
+                        <input type="number"
+                               class="form-control"
+                               id="old_price"
+                               name="old_price"
+                               value="{{ request.form.get('old_price', '') }}"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00">
+                    </div>
+                </div>
+
+
+                <!-- Price -->
+                <div class="col-md-4 mb-3">
+                    <label for="price" class="form-label fw-semibold">
+                        Price
+                    </label>
+
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+
+                        <input type="number"
+                               class="form-control"
+                               id="price"
+                               name="price"
+                               value="{{ request.form.get('price', '') }}"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00"
+                               required>
+                    </div>
+                </div>
+
+
+                <!-- Discounted Price -->
+                <div class="col-md-4 mb-3">
+                    <label for="discounted_price"
+                           class="form-label fw-semibold">
+                        Discounted Price
+                    </label>
+
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+
+                        <input type="number"
+                               class="form-control"
+                               id="discounted_price"
+                               name="discounted_price"
+                               value="{{ request.form.get('discounted_price', '') }}"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Size -->
+            <div class="mb-3">
+                <label for="size" class="form-label fw-semibold">
+                    Sizes
+                </label>
+
+                <input type="text"
+                       class="form-control"
+                       id="size"
+                       name="size"
+                       value="{{ request.form.get('size', '') }}"
+                       placeholder="S, M, L, XL">
+
+                <div class="form-text">
+                    Separate multiple sizes with commas.
+                    Example: S, M, L, XL
+                </div>
+            </div>
+
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description"
+                       class="form-label fw-semibold">
+                    Description
+                </label>
+
+                <textarea class="form-control"
+                          id="description"
+                          name="description"
+                          rows="5"
+                          placeholder="Enter product description">{{ request.form.get('description', '') }}</textarea>
+            </div>
+
+
+            <div class="row">
+
+                <!-- Rating -->
+                <div class="col-md-6 mb-3">
+                    <label for="rating"
+                           class="form-label fw-semibold">
+                        Rating
+                    </label>
+
+                    <input type="number"
+                           class="form-control"
+                           id="rating"
+                           name="rating"
+                           value="{{ request.form.get('rating', '0') }}"
+                           min="0"
+                           max="5"
+                           step="0.1"
+                           placeholder="0">
+                </div>
+
+
+                <!-- Product Image -->
+                <div class="col-md-6 mb-3">
+                    <label for="image"
+                           class="form-label fw-semibold">
+                        Product Image
+                    </label>
+
+                    <input type="file"
+                           class="form-control"
+                           id="image"
+                           name="image"
+                           accept=".jpg,.jpeg,.png,.gif">
+
+                    <div class="form-text">
+                        Allowed: JPG, JPEG, PNG, GIF
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- New Product -->
+            <div class="form-check mb-4">
+
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="is_new"
+                       name="is_new"
+                       value="1"
+                       {% if request.form.get('is_new') %}checked{% endif %}>
+
+                <label class="form-check-label fw-semibold"
+                       for="is_new">
+                    Mark as New Product
+                </label>
+
+            </div>
+
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i>
+                    Add Product
+                </button>
+
+                <a href="{{ url_for('admin_products.products') }}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
