@@ -4,18 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>Admin Login | La Beauté Studio</title>
-
     {% include 'admin/includes/styles.html' %}
 </head>
 
 <body class="admin-login-page">
-
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-md-5 col-lg-4">
-
                 <div class="card border-0 shadow-sm rounded-4">
                     <div class="card-body p-4 p-md-5">
 
@@ -38,6 +34,9 @@
 
                         <!-- Login Form -->
                         <form method="POST" action="{{ url_for('admin_auth.login') }}">
+
+                            <!-- CSRF Token -->
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <!-- Username -->
                             <div class="mb-3">

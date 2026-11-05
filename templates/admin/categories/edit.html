@@ -1,0 +1,84 @@
+{% extends "admin/master.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-uppercase mb-1">Edit Category</h2>
+        <p class="text-muted mb-0">Update category information.</p>
+    </div>
+    <a href="{{ url_for('admin_categories.categories') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to Categories
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header">
+        <span class="fw-semibold">Category Information</span>
+    </div>
+
+    <div class="card-body">
+        <form action="{{ url_for('admin_categories.edit_category', category_id=category.id) }}"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- CATEGORY NAME -->
+            <div class="mb-3">
+                <label for="name" class="form-label fw-semibold">
+                    Category Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" id="name" name="name" class="form-control"
+                       value="{{ category.name }}" placeholder="Enter category name" required>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="mb-3">
+                <label for="description" class="form-label fw-semibold">Description</label>
+                <textarea id="description" name="description" class="form-control"
+                          rows="5" placeholder="Enter category description">
+                    {{ category.description or "" }}
+                </textarea>
+            </div>
+
+            <!-- CURRENT IMAGE -->
+            {% if category.image %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Current Image</label>
+                <div>
+                    <img src="{{ url_for('static', filename='uploads/categories/' ~ category.image) }}"
+                         alt="{{ category.name }}"
+                         class="rounded border"
+                         style="width:120px; height:120px; object-fit:cover;">
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- NEW IMAGE -->
+            <div class="mb-4">
+                <label for="image" class="form-label fw-semibold">Replace Image</label>
+                <input type="file" id="image" name="image" class="form-control"
+                       accept=".jpg,.jpeg,.png,.gif,.webp">
+                <div class="form-text">Leave empty to keep the current image.</div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{{ url_for('admin_categories.categories') }}"
+                   class="btn btn-secondary d-flex align-items-center">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-clipboard2-check me-1"></i>
+                    Update Category
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

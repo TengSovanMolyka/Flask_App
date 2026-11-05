@@ -1,5 +1,7 @@
 from routes.admin.users import admin_users_bp
+
 from routes.admin.products import admin_products_bp
+from routes.admin.categories import admin_categories_bp
 
 from routes.admin.orders import admin_orders_bp
 
@@ -10,6 +12,7 @@ from routes.admin.dashboard import admin_dashboard_bp
 __all__ = [
     "admin_users_bp",
     "admin_products_bp",
+    "admin_categories_bp",
     "admin_orders_bp",
     "admin_auth_bp",
     "admin_dashboard_bp",

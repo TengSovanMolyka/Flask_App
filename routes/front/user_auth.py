@@ -12,6 +12,7 @@ auth_bp = Blueprint("auth", __name__)
 # ==========================================================
 # REGISTER
 # ==========================================================
+
 @auth_bp.route("/create_user", methods=["GET", "POST"])
 def create_user():
     if request.method == "POST":
@@ -23,34 +24,33 @@ def create_user():
         confirm_password = request.form.get("confirm_password", "")
 
         # Basic validation
-        if not full_name:
-            flash("Full name is required.", "danger")
-            return redirect(url_for("auth.create_user"))
-        if not username:
-            flash("Username is required.", "danger")
-            return redirect(url_for("auth.create_user"))
-        if not email:
-            flash("Email is required.", "danger")
-            return redirect(url_for("auth.create_user"))
-        if not password:
-            flash("Password is required.", "danger")
+        if not full_name or not username or not email or not phone or not password:
+            flash("Please fill in all required fields.", "danger")
             return redirect(url_for("auth.create_user"))
 
-        # Password confirmation
+        # Confirm password
         if password != confirm_password:
             flash("Passwords do not match!", "danger")
             return redirect(url_for("auth.create_user"))
 
-        # Check duplicates
+        # Check duplicate username
         if User.query.filter_by(username=username).first():
             flash("Username already taken!", "danger")
             return redirect(url_for("auth.create_user"))
+
+        # Check duplicate email
         if User.query.filter_by(email=email).first():
             flash("Email already registered!", "danger")
             return redirect(url_for("auth.create_user"))
 
-        # Hash password and create user
+        # Check duplicate phone number
+        if User.query.filter_by(contact=phone).first():
+            flash("Phone number already registered!", "danger")
+            return redirect(url_for("auth.create_user"))
+
+        # Create new user
         hashed_password = generate_password_hash(password)
+
         new_user = User(
             full_name=full_name,
             username=username,
@@ -60,11 +60,18 @@ def create_user():
             role="User",
             status="Active",
         )
-        db.session.add(new_user)
-        db.session.commit()
 
-        flash("Account created successfully! Please login.", "success")
-        return redirect(url_for("auth.login"))
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash("Account created successfully! Please login.", "success")
+            return redirect(url_for("auth.login"))
+
+        except Exception:
+            db.session.rollback()
+            flash("Unable to create account. Please try again.", "danger")
+            return redirect(url_for("auth.create_user"))
 
     return render_template("front/user/register.html")
 

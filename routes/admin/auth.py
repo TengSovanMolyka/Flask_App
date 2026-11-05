@@ -12,7 +12,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 
 from models.user import User
-
+from extensions import limiter
 
 # ==========================================================
 # ADMIN / DASHBOARD AUTH BLUEPRINT
@@ -86,6 +86,7 @@ def admin_required(view):
 # LOGIN
 # ==========================================================
 @admin_auth_bp.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def login():
 
     # Already logged in

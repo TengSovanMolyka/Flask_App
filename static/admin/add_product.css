@@ -1,0 +1,313 @@
+/* =========================================================
+   ADD PRODUCT PAGE
+   Completely New Style
+   No HTML / Flask / JavaScript changes required
+========================================================= */
+
+/* PAGE BACKGROUND */
+body {
+    background: #f4f6fa;
+}
+
+/* PAGE TITLE */
+h2.fw-bold.text-uppercase {
+    color: #182230;
+    font-size: 28px;
+    letter-spacing: 0.3px;
+    margin-bottom: 25px !important;
+}
+
+/* =========================================================
+   MAIN PRODUCT CARD
+========================================================= */
+.card.shadow-sm.border-0 {
+    border: 1px solid #e7eaf0 !important;
+    border-radius: 16px !important;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06) !important;
+    overflow: hidden;
+}
+
+/* CARD HEADER */
+.card.shadow-sm.border-0 > .card-header {
+    background: #ffffff;
+    border-bottom: 1px solid #edf0f4;
+    padding: 20px 26px;
+    color: #182230;
+    font-size: 16px;
+}
+
+/* CARD BODY */
+.card.shadow-sm.border-0 > .card-body {
+    padding: 30px;
+}
+
+/* =========================================================
+   LABELS
+========================================================= */
+.card.shadow-sm.border-0 .form-label {
+    color: #344054;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* =========================================================
+   INPUTS / SELECT
+========================================================= */
+.card.shadow-sm.border-0 .form-control,
+.card.shadow-sm.border-0 .form-select {
+    min-height: 46px;
+    border: 1px solid #d7dce5;
+    border-radius: 9px;
+    color: #1d2939;
+    background: #ffffff;
+    font-size: 14px;
+    box-shadow: none;
+    transition: 0.2s ease;
+}
+
+.card.shadow-sm.border-0 .form-control {
+    padding: 10px 13px;
+}
+
+.card.shadow-sm.border-0 .form-control::placeholder {
+    color: #98a2b3;
+}
+
+/* HOVER */
+.card.shadow-sm.border-0 .form-control:hover,
+.card.shadow-sm.border-0 .form-select:hover {
+    border-color: #b7bfcc;
+}
+
+/* FOCUS */
+.card.shadow-sm.border-0 .form-control:focus,
+.card.shadow-sm.border-0 .form-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
+}
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+.card.shadow-sm.border-0 textarea.form-control {
+    min-height: 135px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   HELPER TEXT
+========================================================= */
+.card.shadow-sm.border-0 .form-text {
+    color: #8b95a5;
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+.card.shadow-sm.border-0 .form-check-input {
+    width: 19px;
+    height: 19px;
+    border: 1px solid #c7ced8;
+    cursor: pointer;
+}
+
+.card.shadow-sm.border-0 .form-check-input:checked {
+    background-color: #6366f1;
+    border-color: #6366f1;
+}
+
+.card.shadow-sm.border-0 .form-check-label {
+    color: #475467;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* =========================================================
+   SIZE BUTTONS
+========================================================= */
+.d-flex.gap-4.flex-wrap {
+    gap: 10px !important;
+}
+
+.d-flex.gap-4.flex-wrap .form-check {
+    position: relative;
+    padding-left: 0;
+}
+
+.d-flex.gap-4.flex-wrap .form-check-input {
+    position: absolute;
+    opacity: 0;
+}
+
+.d-flex.gap-4.flex-wrap .form-check-label {
+    min-width: 52px;
+    height: 42px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d7dce5;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #475467;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.d-flex.gap-4.flex-wrap .form-check-label:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+    background: #f7f7ff;
+}
+
+.d-flex.gap-4.flex-wrap .form-check-input:checked + .form-check-label {
+    background: #6366f1;
+    border-color: #6366f1;
+    color: #ffffff;
+}
+
+/* =========================================================
+   FILE INPUTS
+========================================================= */
+input[type="file"].form-control {
+    padding: 7px !important;
+    background: #fafbfc;
+    cursor: pointer;
+}
+
+input[type="file"].form-control::file-selector-button {
+    border: none;
+    border-radius: 7px;
+    background: #eef0ff;
+    color: #4f46e5;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+input[type="file"].form-control::file-selector-button:hover {
+    background: #e3e5ff;
+}
+
+/* =========================================================
+   MAIN IMAGE PREVIEW
+========================================================= */
+#mainImagePreviewImg {
+    width: 180px !important;
+    height: 180px !important;
+    object-fit: cover;
+    padding: 4px;
+    border: 1px solid #e4e7ec !important;
+    border-radius: 12px !important;
+    background: #ffffff;
+    box-shadow: 0 5px 18px rgba(16, 24, 40, 0.08);
+}
+
+#removeMainImage {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid #ffffff;
+    box-shadow: 0 3px 8px rgba(16, 24, 40, 0.15);
+}
+
+/* =========================================================
+   ADDITIONAL IMAGE PREVIEW
+========================================================= */
+#imagePreview {
+    margin-top: 12px !important;
+}
+
+#imagePreview .card {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(16, 24, 40, 0.06) !important;
+    transition: 0.2s ease;
+}
+
+#imagePreview .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16, 24, 40, 0.10) !important;
+}
+
+#imagePreview .card-img-top {
+    height: 150px !important;
+    object-fit: cover;
+}
+
+#imagePreview .card-body {
+    padding: 9px !important;
+}
+
+#imagePreview small {
+    color: #667085 !important;
+    font-size: 11px;
+}
+
+#imagePreview .remove-image {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 7px rgba(16, 24, 40, 0.15);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.card.shadow-sm.border-0 .btn {
+    min-height: 44px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+/* ADD PRODUCT */
+.card.shadow-sm.border-0 .btn-primary {
+    background: #6366f1;
+    border-color: #6366f1;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.20);
+}
+
+.card.shadow-sm.border-0 .btn-primary:hover {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(99, 102, 241, 0.25);
+}
+
+/* CANCEL */
+.card.shadow-sm.border-0 .btn-secondary {
+    background: #ffffff;
+    border: 1px solid #d7dce5;
+    color: #475467;
+}
+
+.card.shadow-sm.border-0 .btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #c4cad5;
+    color: #344054;
+}
+
+/* BUTTON ICON */
+.card

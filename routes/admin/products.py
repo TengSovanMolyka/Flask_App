@@ -1,5 +1,4 @@
 import os
-import json
 
 from flask import (
     Blueprint,
@@ -15,6 +14,8 @@ from werkzeug.utils import secure_filename
 
 from extensions import db
 from models.product import Product
+from models.category import Category
+from models.product_image import ProductImage
 
 
 admin_products_bp = Blueprint(
@@ -25,158 +26,75 @@ admin_products_bp = Blueprint(
 
 
 # ==========================================================
-# FILE UPLOAD
+# ALLOWED IMAGE EXTENSIONS
 # ==========================================================
 
-def allowed_image(filename):
-    if not filename or "." not in filename:
-        return False
+ALLOWED_EXTENSIONS = {
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "webp",
+    "avif",
+}
 
-    extension = filename.rsplit(".", 1)[1].lower()
 
-    return extension in current_app.config.get(
-        "ALLOWED_EXTENSIONS",
-        {"png", "jpg", "jpeg", "gif"}
+# ==========================================================
+# IMAGE HELPERS
+# ==========================================================
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
 
-def upload_product_image(image):
-    """
-    Upload product image and return filename.
-    """
-
-    if not image or not image.filename:
-        return None
-
-    if not allowed_image(image.filename):
-        return None
-
-    filename = secure_filename(image.filename)
-
-    upload_folder = os.path.join(
-        current_app.root_path,
-        "static",
+def get_upload_folder():
+    folder = os.path.join(
+        current_app.static_folder,
         "uploads",
         "products"
     )
 
-    os.makedirs(upload_folder, exist_ok=True)
+    os.makedirs(folder, exist_ok=True)
 
-    filepath = os.path.join(
-        upload_folder,
-        filename
-    )
-
-    image.save(filepath)
-
-    return filename
+    return folder
 
 
-def delete_product_image(filename):
-    """
-    Delete product image from storage.
-    """
+def get_unique_filename(filename):
+    filename = secure_filename(filename)
 
+    name, extension = os.path.splitext(filename)
+
+    upload_folder = get_upload_folder()
+
+    new_filename = filename
+    counter = 1
+
+    while os.path.exists(
+        os.path.join(upload_folder, new_filename)
+    ):
+        new_filename = f"{name}_{counter}{extension}"
+        counter += 1
+
+    return new_filename
+
+
+def delete_image_file(filename):
     if not filename:
         return
 
-    filepath = os.path.join(
-        current_app.root_path,
-        "static",
-        "uploads",
-        "products",
+    file_path = os.path.join(
+        get_upload_folder(),
         filename
     )
 
-    if os.path.exists(filepath):
-        os.remove(filepath)
-
-
-# ==========================================================
-# FORM DATA
-# ==========================================================
-
-def get_product_form():
-    """
-    Read product information from the submitted form.
-    """
-
-    title = request.form.get("title", "").strip()
-
-    is_new = request.form.get("is_new") == "1"
-
-    old_price = request.form.get("old_price", "").strip()
-
-    price = request.form.get("price", "").strip()
-
-    discounted_price = request.form.get(
-        "discounted_price",
-        ""
-    ).strip()
-
-    description = request.form.get(
-        "description",
-        ""
-    ).strip()
-
-    category = request.form.get(
-        "category",
-        ""
-    ).strip()
-
-    product_type = request.form.get(
-        "type",
-        ""
-    ).strip()
-
-    stock = request.form.get(
-        "stock",
-        "0"
-    ).strip()
-
-    brand = request.form.get(
-        "brand",
-        ""
-    ).strip()
-
-    rating = request.form.get(
-        "rating",
-        "0"
-    ).strip()
-
-    size_text = request.form.get(
-        "size",
-        ""
-    ).strip()
-
-    # Convert sizes into JSON list
-    if size_text:
-        size = [
-            item.strip()
-            for item in size_text.split(",")
-            if item.strip()
-        ]
-    else:
-        size = []
-
-    return {
-        "title": title,
-        "is_new": is_new,
-        "old_price": float(old_price) if old_price else None,
-        "price": float(price) if price else 0,
-        "discounted_price": (
-            float(discounted_price)
-            if discounted_price
-            else None
-        ),
-        "description": description,
-        "category": category,
-        "type": product_type,
-        "stock": int(stock) if stock else 0,
-        "brand": brand,
-        "size": size,
-        "rating": float(rating) if rating else 0,
-    }
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except OSError:
+            pass
 
 
 # ==========================================================
@@ -186,14 +104,16 @@ def get_product_form():
 @admin_products_bp.get("/")
 def products():
 
-    rows = Product.query.order_by(
-        Product.id.desc()
-    ).all()
+    rows = (
+        Product.query
+        .order_by(Product.id.desc())
+        .all()
+    )
 
     return render_template(
         "admin/products/index.html",
-        module="products",
-        rows=rows
+        rows=rows,
+        module="products"
     )
 
 
@@ -204,77 +124,349 @@ def products():
 @admin_products_bp.route("/add", methods=["GET", "POST"])
 def add_product():
 
+    categories = (
+        Category.query
+        .order_by(Category.name.asc())
+        .all()
+    )
+
     if request.method == "POST":
 
+        # --------------------------------------------------
+        # BASIC FIELDS
+        # --------------------------------------------------
+
+        name = request.form.get("name", "").strip()
+        product_type = request.form.get("type", "").strip()
+        brand = request.form.get("brand", "").strip()
+
+        is_new = request.form.get("is_new") == "1"
+
+        category_id_text = request.form.get(
+            "category_id",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        # --------------------------------------------------
+        # PRICE / STOCK / RATING
+        # --------------------------------------------------
+
+        old_price_text = request.form.get(
+            "old_price",
+            ""
+        ).strip()
+
+        price_text = request.form.get(
+            "price",
+            ""
+        ).strip()
+
+        discounted_price_text = request.form.get(
+            "discounted_price",
+            ""
+        ).strip()
+
+        stock_text = request.form.get(
+            "stock",
+            "0"
+        ).strip()
+
+        rating_text = request.form.get(
+            "rating",
+            "0"
+        ).strip()
+
+        # --------------------------------------------------
+        # SIZE
+        # --------------------------------------------------
+
+        allowed_sizes = {
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+        }
+
+        sizes = [
+            size
+            for size in request.form.getlist("size")
+            if size in allowed_sizes
+        ]
+
+        # --------------------------------------------------
+        # VALIDATION
+        # --------------------------------------------------
+
+        if not name:
+            flash("Product name is required.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        if not product_type:
+            flash("Product type is required.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        if not category_id_text:
+            flash("Please select a category.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
         try:
-            data = get_product_form()
+            category_id = int(category_id_text)
+        except ValueError:
+            flash("Invalid category.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
 
-            # Basic validation
-            if not data["title"]:
+        category = db.session.get(
+            Category,
+            category_id
+        )
+
+        if not category:
+            flash("Selected category does not exist.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # CONVERT NUMBERS
+        # --------------------------------------------------
+
+        try:
+            if not price_text:
+                raise ValueError
+
+            price = float(price_text)
+
+            if price < 0:
+                raise ValueError
+
+        except ValueError:
+            flash("Please enter a valid price.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        try:
+            old_price = (
+                float(old_price_text)
+                if old_price_text
+                else None
+            )
+
+            if old_price is not None and old_price < 0:
+                raise ValueError
+
+        except ValueError:
+            flash("Please enter a valid old price.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        try:
+            discounted_price = (
+                float(discounted_price_text)
+                if discounted_price_text
+                else None
+            )
+
+            if (
+                discounted_price is not None
+                and discounted_price < 0
+            ):
+                raise ValueError
+
+        except ValueError:
+            flash(
+                "Please enter a valid discounted price.",
+                "danger"
+            )
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        try:
+            stock = int(stock_text)
+
+            if stock < 0:
+                raise ValueError
+
+        except ValueError:
+            flash("Please enter a valid stock quantity.", "danger")
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        try:
+            rating = float(rating_text or 0)
+
+            if rating < 0 or rating > 5:
+                raise ValueError
+
+        except ValueError:
+            flash(
+                "Rating must be between 0 and 5.",
+                "danger"
+            )
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # UPLOAD IMAGES
+        # --------------------------------------------------
+
+        uploaded_files = request.files.getlist("images")
+
+        uploaded_images = []
+
+        for file in uploaded_files:
+
+            if not file or not file.filename:
+                continue
+
+            if not allowed_file(file.filename):
                 flash(
-                    "Product title is required.",
+                    f"Invalid image type: {file.filename}",
                     "danger"
                 )
                 return render_template(
                     "admin/products/add.html",
+                    categories=categories,
                     module="products"
                 )
 
-            if not data["category"]:
-                flash(
-                    "Category is required.",
-                    "danger"
-                )
-                return render_template(
-                    "admin/products/add.html",
-                    module="products"
-                )
+            filename = get_unique_filename(
+                file.filename
+            )
 
-            if not data["type"]:
-                flash(
-                    "Product type is required.",
-                    "danger"
+            file.save(
+                os.path.join(
+                    get_upload_folder(),
+                    filename
                 )
-                return render_template(
-                    "admin/products/add.html",
-                    module="products"
-                )
+            )
 
-            if data["price"] < 0:
-                flash(
-                    "Price cannot be negative.",
-                    "danger"
-                )
-                return render_template(
-                    "admin/products/add.html",
-                    module="products"
-                )
+            uploaded_images.append(filename)
 
-            if data["stock"] < 0:
-                flash(
-                    "Stock cannot be negative.",
-                    "danger"
-                )
-                return render_template(
-                    "admin/products/add.html",
-                    module="products"
-                )
+        # --------------------------------------------------
+        # MAIN IMAGE
+        # --------------------------------------------------
 
-            # Upload image
-            image = request.files.get("image")
+        main_image_index_text = request.form.get(
+            "main_image_index",
+            "0"
+        )
 
-            filename = upload_product_image(image)
+        try:
+            main_image_index = int(
+                main_image_index_text
+            )
+        except ValueError:
+            main_image_index = 0
 
-            data["image"] = filename
+        thumbnail = None
 
-            # Create product
-            product = Product(**data)
+        if uploaded_images:
 
-            db.session.add(product)
+            if (
+                0 <= main_image_index
+                < len(uploaded_images)
+            ):
+                thumbnail = uploaded_images[
+                    main_image_index
+                ]
+            else:
+                thumbnail = uploaded_images[0]
+
+        # --------------------------------------------------
+        # CREATE PRODUCT
+        # --------------------------------------------------
+
+        product = Product(
+            name=name,
+            type=product_type,
+            brand=brand or None,
+            is_new=is_new,
+
+            thumbnail=thumbnail,
+
+            # Current add form has no cost field.
+            cost=None,
+
+            old_price=old_price,
+            price=price,
+            discounted_price=discounted_price,
+
+            stock=stock,
+            rating=rating,
+
+            size=sizes if sizes else None,
+
+            category_id=category.id,
+
+            description=description or None,
+        )
+
+        db.session.add(product)
+        db.session.flush()
+
+        # --------------------------------------------------
+        # SAVE PRODUCT IMAGES
+        # --------------------------------------------------
+
+        for filename in uploaded_images:
+
+            product_image = ProductImage(
+                product_id=product.id,
+                name=filename
+            )
+
+            db.session.add(product_image)
+
+        # --------------------------------------------------
+        # COMMIT
+        # --------------------------------------------------
+
+        try:
+
             db.session.commit()
 
             flash(
-                "Product added successfully!",
+                "Product added successfully.",
                 "success"
             )
 
@@ -282,26 +474,33 @@ def add_product():
                 url_for("admin_products.products")
             )
 
-        except ValueError:
+        except Exception as e:
+
             db.session.rollback()
 
+            # Remove uploaded files if database failed
+            for filename in uploaded_images:
+                delete_image_file(filename)
+
+            current_app.logger.exception(
+                "Error adding product: %s",
+                e
+            )
+
             flash(
-                "Please enter valid numbers for price, stock, and rating.",
+                "Failed to add product.",
                 "danger"
             )
 
-        except Exception as e:
-            db.session.rollback()
-
-            print("Add Product Error:", e)
-
-            flash(
-                "Unable to add product.",
-                "danger"
+            return render_template(
+                "admin/products/add.html",
+                categories=categories,
+                module="products"
             )
 
     return render_template(
         "admin/products/add.html",
+        categories=categories,
         module="products"
     )
 
@@ -316,111 +515,504 @@ def add_product():
 )
 def edit_product(product_id):
 
-    product = Product.query.get_or_404(product_id)
+    product = db.session.get(
+        Product,
+        product_id
+    )
+
+    if not product:
+
+        flash(
+            "Product not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("admin_products.products")
+        )
+
+    categories = (
+        Category.query
+        .order_by(Category.name.asc())
+        .all()
+    )
 
     if request.method == "POST":
 
+        # --------------------------------------------------
+        # BASIC FIELDS
+        # --------------------------------------------------
+
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        product_type = request.form.get(
+            "type",
+            ""
+        ).strip()
+
+        brand = request.form.get(
+            "brand",
+            ""
+        ).strip()
+
+        is_new = request.form.get(
+            "is_new"
+        ) == "1"
+
+        category_id_text = request.form.get(
+            "category_id",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        # --------------------------------------------------
+        # NUMERIC FIELDS
+        # --------------------------------------------------
+
+        # If the form does not contain cost,
+        # preserve the current database value.
+        cost_text = request.form.get("cost")
+
+        old_price_text = request.form.get(
+            "old_price",
+            ""
+        ).strip()
+
+        price_text = request.form.get(
+            "price",
+            ""
+        ).strip()
+
+        discounted_price_text = request.form.get(
+            "discounted_price",
+            ""
+        ).strip()
+
+        stock_text = request.form.get(
+            "stock",
+            "0"
+        ).strip()
+
+        rating_text = request.form.get(
+            "rating",
+            "0"
+        ).strip()
+
+        # --------------------------------------------------
+        # VALIDATE BASIC FIELDS
+        # --------------------------------------------------
+
+        if not name:
+            flash(
+                "Product name is required.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        if not product_type:
+            flash(
+                "Product type is required.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
         try:
-            data = get_product_form()
+            category_id = int(category_id_text)
 
-            if not data["title"]:
+        except ValueError:
+
+            flash(
+                "Invalid category.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        category = db.session.get(
+            Category,
+            category_id
+        )
+
+        if not category:
+
+            flash(
+                "Selected category does not exist.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # COST
+        # --------------------------------------------------
+
+        if cost_text is None:
+
+            cost = product.cost
+
+        else:
+
+            cost_text = cost_text.strip()
+
+            try:
+
+                cost = (
+                    float(cost_text)
+                    if cost_text
+                    else None
+                )
+
+                if cost is not None and cost < 0:
+                    raise ValueError
+
+            except ValueError:
+
                 flash(
-                    "Product title is required.",
+                    "Please enter a valid cost.",
                     "danger"
                 )
 
                 return render_template(
                     "admin/products/edit.html",
-                    module="products",
-                    product=product
+                    product=product,
+                    categories=categories,
+                    module="products"
                 )
 
-            if not data["category"]:
+        # --------------------------------------------------
+        # OLD PRICE
+        # --------------------------------------------------
+
+        try:
+
+            old_price = (
+                float(old_price_text)
+                if old_price_text
+                else None
+            )
+
+            if old_price is not None and old_price < 0:
+                raise ValueError
+
+        except ValueError:
+
+            flash(
+                "Please enter a valid old price.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # PRICE
+        # --------------------------------------------------
+
+        try:
+
+            if not price_text:
+                raise ValueError
+
+            price = float(price_text)
+
+            if price < 0:
+                raise ValueError
+
+        except ValueError:
+
+            flash(
+                "Please enter a valid price.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # DISCOUNTED PRICE
+        # --------------------------------------------------
+
+        try:
+
+            discounted_price = (
+                float(discounted_price_text)
+                if discounted_price_text
+                else None
+            )
+
+            if (
+                discounted_price is not None
+                and discounted_price < 0
+            ):
+                raise ValueError
+
+        except ValueError:
+
+            flash(
+                "Please enter a valid discounted price.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # STOCK
+        # --------------------------------------------------
+
+        try:
+
+            stock = int(stock_text)
+
+            if stock < 0:
+                raise ValueError
+
+        except ValueError:
+
+            flash(
+                "Please enter a valid stock quantity.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # RATING
+        # --------------------------------------------------
+
+        try:
+
+            rating = float(rating_text or 0)
+
+            if rating < 0 or rating > 5:
+                raise ValueError
+
+        except ValueError:
+
+            flash(
+                "Rating must be between 0 and 5.",
+                "danger"
+            )
+
+            return render_template(
+                "admin/products/edit.html",
+                product=product,
+                categories=categories,
+                module="products"
+            )
+
+        # --------------------------------------------------
+        # SIZE
+        # --------------------------------------------------
+
+        allowed_sizes = {
+            "XS",
+            "S",
+            "M",
+            "L",
+            "XL",
+            "XXL",
+        }
+
+        sizes = [
+            size
+            for size in request.form.getlist("size")
+            if size in allowed_sizes
+        ]
+
+        # --------------------------------------------------
+        # UPDATE PRODUCT
+        # --------------------------------------------------
+
+        product.name = name
+        product.type = product_type
+        product.brand = brand or None
+        product.is_new = is_new
+
+        product.category_id = category.id
+
+        product.description = (
+            description or None
+        )
+
+        product.cost = cost
+        product.old_price = old_price
+        product.price = price
+        product.discounted_price = discounted_price
+
+        product.stock = stock
+        product.rating = rating
+
+        product.size = (
+            sizes if sizes else None
+        )
+
+        # --------------------------------------------------
+        # UPLOAD NEW IMAGES
+        # --------------------------------------------------
+
+        uploaded_files = request.files.getlist(
+            "images"
+        )
+
+        new_images = []
+
+        for file in uploaded_files:
+
+            if not file or not file.filename:
+                continue
+
+            if not allowed_file(file.filename):
+
                 flash(
-                    "Category is required.",
+                    f"Invalid image type: {file.filename}",
                     "danger"
                 )
 
                 return render_template(
                     "admin/products/edit.html",
-                    module="products",
-                    product=product
+                    product=product,
+                    categories=categories,
+                    module="products"
                 )
 
-            if not data["type"]:
-                flash(
-                    "Product type is required.",
-                    "danger"
+            filename = get_unique_filename(
+                file.filename
+            )
+
+            file.save(
+                os.path.join(
+                    get_upload_folder(),
+                    filename
+                )
+            )
+
+            new_images.append(filename)
+
+            db.session.add(
+                ProductImage(
+                    product_id=product.id,
+                    name=filename
+                )
+            )
+
+        # --------------------------------------------------
+        # MAIN IMAGE
+        # --------------------------------------------------
+
+        main_image = request.form.get(
+            "main_image",
+            ""
+        ).strip()
+
+        existing_images = [
+            image.name
+            for image in product.images
+        ]
+
+        valid_image_names = (
+            existing_images + new_images
+        )
+
+        # New image selected from edit page
+        if main_image.startswith("__NEW__"):
+
+            try:
+
+                new_index = int(
+                    main_image.replace(
+                        "__NEW__",
+                        "",
+                        1
+                    )
                 )
 
-                return render_template(
-                    "admin/products/edit.html",
-                    module="products",
-                    product=product
-                )
+            except ValueError:
 
-            if data["price"] < 0:
-                flash(
-                    "Price cannot be negative.",
-                    "danger"
-                )
+                new_index = -1
 
-                return render_template(
-                    "admin/products/edit.html",
-                    module="products",
-                    product=product
-                )
+            if (
+                0 <= new_index
+                < len(new_images)
+            ):
+                product.thumbnail = new_images[
+                    new_index
+                ]
 
-            if data["stock"] < 0:
-                flash(
-                    "Stock cannot be negative.",
-                    "danger"
-                )
+        # Existing image selected
+        elif (
+            main_image
+            and main_image in existing_images
+        ):
 
-                return render_template(
-                    "admin/products/edit.html",
-                    module="products",
-                    product=product
-                )
+            product.thumbnail = main_image
 
-            # Update product fields
-            product.title = data["title"]
-            product.is_new = data["is_new"]
-            product.old_price = data["old_price"]
-            product.price = data["price"]
-            product.discounted_price = data[
-                "discounted_price"
-            ]
-            product.description = data["description"]
-            product.category = data["category"]
-            product.type = data["type"]
-            product.stock = data["stock"]
-            product.brand = data["brand"]
-            product.size = data["size"]
-            product.rating = data["rating"]
+        # If product has no thumbnail
+        elif (
+            not product.thumbnail
+            and valid_image_names
+        ):
 
-            # New image
-            image = request.files.get("image")
+            product.thumbnail = (
+                valid_image_names[0]
+            )
 
-            if image and image.filename:
+        # --------------------------------------------------
+        # COMMIT
+        # --------------------------------------------------
 
-                new_filename = upload_product_image(image)
-
-                if new_filename:
-
-                    old_filename = product.image
-
-                    product.image = new_filename
-
-                    if old_filename:
-                        delete_product_image(
-                            old_filename
-                        )
+        try:
 
             db.session.commit()
 
             flash(
-                "Product updated successfully!",
+                "Product updated successfully.",
                 "success"
             )
 
@@ -428,28 +1020,59 @@ def edit_product(product_id):
                 url_for("admin_products.products")
             )
 
-        except ValueError:
+        except Exception as e:
+
             db.session.rollback()
 
-            flash(
-                "Please enter valid numbers.",
-                "danger"
+            # Remove newly uploaded files
+            for filename in new_images:
+                delete_image_file(filename)
+
+            current_app.logger.exception(
+                "Error updating product: %s",
+                e
             )
 
-        except Exception as e:
-            db.session.rollback()
-
-            print("Edit Product Error:", e)
-
             flash(
-                "Unable to update product.",
+                "Failed to update product.",
                 "danger"
             )
 
     return render_template(
         "admin/products/edit.html",
-        module="products",
-        product=product
+        product=product,
+        categories=categories,
+        module="products"
+    )
+
+
+# ==========================================================
+# DELETE CONFIRMATION PAGE
+# ==========================================================
+
+@admin_products_bp.get("/delete/<int:product_id>")
+def confirm_delete(product_id):
+
+    product = db.session.get(
+        Product,
+        product_id
+    )
+
+    if not product:
+
+        flash(
+            "Product not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("admin_products.products")
+        )
+
+    return render_template(
+        "admin/products/delete.html",
+        product=product,
+        module="products"
     )
 
 
@@ -457,53 +1080,70 @@ def edit_product(product_id):
 # DELETE PRODUCT
 # ==========================================================
 
-@admin_products_bp.route(
-    "/delete/<int:product_id>",
-    methods=["GET", "POST"]
-)
+@admin_products_bp.post("/delete/<int:product_id>")
 def delete_product(product_id):
 
-    product = Product.query.get_or_404(product_id)
+    product = db.session.get(
+        Product,
+        product_id
+    )
 
-    if request.method == "POST":
+    if not product:
 
-        try:
+        flash(
+            "Product not found.",
+            "danger"
+        )
 
-            # Delete product image
-            if product.image:
-                delete_product_image(
-                    product.image
-                )
+        return redirect(
+            url_for("admin_products.products")
+        )
 
-            db.session.delete(product)
-            db.session.commit()
+    # Keep image names before deleting product
+    image_names = [
+        image.name
+        for image in product.images
+        if image.name
+    ]
 
-            flash(
-                "Product deleted successfully!",
-                "success"
-            )
+    # Also include thumbnail
+    if (
+        product.thumbnail
+        and product.thumbnail not in image_names
+    ):
+        image_names.append(
+            product.thumbnail
+        )
 
-            return redirect(
-                url_for("admin_products.products")
-            )
+    try:
 
-        except Exception as e:
+        db.session.delete(product)
 
-            db.session.rollback()
+        db.session.commit()
 
-            print("Delete Product Error:", e)
+        # Delete physical image files
+        for filename in image_names:
+            delete_image_file(filename)
 
-            flash(
-                "Unable to delete product.",
-                "danger"
-            )
+        flash(
+            "Product deleted successfully.",
+            "success"
+        )
 
-            return redirect(
-                url_for("admin_products.products")
-            )
+    except Exception as e:
 
-    return render_template(
-        "admin/products/delete.html",
-        module="products",
-        product=product
+        db.session.rollback()
+
+        current_app.logger.exception(
+            "Error deleting product: %s",
+            e
+        )
+
+        flash(
+            "Failed to delete product.",
+            "danger"
+        )
+
+    return redirect(
+        url_for("admin_products.products")
     )

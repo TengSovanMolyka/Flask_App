@@ -13,7 +13,8 @@
 
             <!-- Dashboard -->
             <li class="nav-item">
-                <a href="/admin/dashboard" class="nav-link {{ 'active' if module =='dashboard' else '' }}">
+                <a href="/admin/dashboard"
+                   class="nav-link {{ 'active' if module =='dashboard' else '' }}">
                     <span>
                         <i class="bi bi-grid-1x2"></i>
                         Dashboard
@@ -24,7 +25,8 @@
             {% if session.get("user_role") == "Admin" %}
             <!-- User -->
             <li class="nav-item">
-                <a href="{{ url_for('admin_users.users') }}" class="nav-link">
+                <a href="{{ url_for('admin_users.users') }}"
+                   class="nav-link {{ 'active' if module =='users' else '' }}">
                     <span>
                         <i class="bi bi-people"></i>
                         Users Management
@@ -34,10 +36,14 @@
             {% endif %}
 
             <!-- Product Menu -->
+            {% set product_modules = ['products', 'categories', 'inventory'] %}
             <li class="nav-item">
                 <a href="#productMenu"
-                   class="nav-link"
-                   data-bs-toggle="collapse">
+                   class="nav-link {{ 'active' if module in product_modules else '' }}"
+                   data-bs-toggle="collapse"
+                   aria-expanded="{{ 'true' if module in product_modules else 'false' }}"
+                   aria-controls="productMenu"
+                >
                     <span>
                         <i class="bi bi-box-seam"></i>
                         Products Management
@@ -45,22 +51,28 @@
                     <i class="bi bi-chevron-down"></i>
                 </a>
 
-                <div class="collapse" id="productMenu">
+                <div class="collapse {{ 'show' if module in product_modules else '' }}"
+                     id="productMenu">
                     <ul class="nav flex-column">
+                        <!-- Products -->
                         <li>
-                            <a href="{{ url_for('admin_products.products') }}" class="nav-link">
+                            <a href="{{ url_for('admin_products.products') }}"
+                               class="nav-link {{ 'active' if module == 'products' else '' }}">
                                 <i class="bi bi-box"></i>
                                 <span>Products</span>
                             </a>
                         </li>
+                        <!-- Categories -->
                         <li>
-                            <a href="" class="nav-link">
+                            <a href="{{ url_for('admin_categories.categories') }}"
+                               class="nav-link {{ 'active' if module == 'categories' else '' }}">
                                 <i class="bi bi-tags"></i>
                                 <span>Categories</span>
                             </a>
                         </li>
                         <li>
-                            <a href="" class="nav-link">
+                            <a href=""
+                               class="nav-link {{ 'active' if module == 'inventory' else '' }}">
                                 <i class="bi bi-boxes"></i>
                                 <span>Inventory</span>
                             </a>

@@ -2,309 +2,422 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold text-uppercase mb-1">Add Product</h2>
-        <p class="text-muted mb-0">
-            Create a new product for La Beauté Studio.
-        </p>
+<div class="lb-product-page">
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+    <div class="lb-page-header">
+        <div>
+            <div class="lb-eyebrow">Products</div>
+            <h1 class="lb-page-title">Create a new product</h1>
+            <p class="lb-page-subtitle">
+                Add a new piece to the La Beauté collection.
+            </p>
+        </div>
+        <a href="{{ url_for('admin_products.products') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle me-1"></i>
+            Back to Products
+        </a>
     </div>
 
-    <a href="{{ url_for('admin_products.products') }}"
-       class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left"></i>
-        Back to Products
-    </a>
-</div>
-
-
-<div class="card shadow-sm border-0">
-
-    <div class="card-header">
-        <span class="fw-semibold">
-            <i class="bi bi-box-seam"></i>
-            Product Information
-        </span>
-    </div>
-
-    <div class="card-body">
-
-        <form method="POST"
-              action="{{ url_for('admin_products.add_product') }}"
-              enctype="multipart/form-data">
-
-            <!-- Product Name -->
-            <div class="mb-3">
-                <label for="title" class="form-label fw-semibold">
-                    Product Name
-                </label>
-
-                <input type="text"
-                       class="form-control"
-                       id="title"
-                       name="title"
-                       value="{{ request.form.get('title', '') }}"
-                       placeholder="Enter product name"
-                       required>
-            </div>
-
-
-            <div class="row">
-
-                <!-- Category -->
-                <div class="col-md-6 mb-3">
-                    <label for="category" class="form-label fw-semibold">
-                        Category
-                    </label>
-
-                    <input type="text"
-                           class="form-control"
-                           id="category"
-                           name="category"
-                           value="{{ request.form.get('category', '') }}"
-                           placeholder="e.g. Dresses"
-                           required>
+    <!-- =====================================================
+         FORM
+         ===================================================== -->
+    <form method="POST"
+          action="{{ url_for('admin_products.add_product') }}"
+          enctype="multipart/form-data"
+          id="productForm">
+        <!-- CSRF -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <!-- BASIC INFORMATION -->
+        <div class="lb-form-card">
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Basic Information</h2>
+                    <p class="lb-section-description">
+                        Enter the essential information about this product.
+                    </p>
                 </div>
 
+                <div class="row g-4">
+                    <!-- TITLE -->
+                    <div class="col-lg-8">
+                        <label class="lb-label">
+                            Product Title <span class="lb-required">*</span>
+                        </label>
+                        <input type="text" name="name" class="lb-input"
+                               placeholder="e.g. Button-Front Top with Collar" required>
+                    </div>
 
-                <!-- Type -->
-                <div class="col-md-6 mb-3">
-                    <label for="type" class="form-label fw-semibold">
-                        Type
-                    </label>
+                    <!-- STATUS -->
+                    <div class="col-lg-4">
+                        <label class="lb-label">Product Status</label>
+                        <div class="lb-status-box">
+                            <div class="lb-status-info">
+                                <div class="lb-status-icon">
+                                    <i class="bi bi-stars"></i>
+                                </div>
+                                <div>
+                                    <p class="lb-status-title">New Product</p>
+                                    <p class="lb-status-text">Show as new collection</p>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input lb-switch"
+                                       type="checkbox" name="is_new" value="1" id="isNew">
+                            </div>
+                        </div>
+                    </div>
 
-                    <input type="text"
-                           class="form-control"
-                           id="type"
-                           name="type"
-                           value="{{ request.form.get('type', '') }}"
-                           placeholder="e.g. Clothing"
-                           required>
-                </div>
+                    <!-- CATEGORY -->
+                    <div class="col-md-4">
+                        <label class="lb-label">
+                            Category <span class="lb-required">*</span>
+                        </label>
+                        <select name="category_id" class="lb-select" required>
+                            <option value="">Select category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            </div>
+                    <!-- TYPE -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Product Type</label>
+                        <input type="text" name="type" class="lb-input"
+                               placeholder="e.g. Women's Top">
+                    </div>
 
-
-            <div class="row">
-
-                <!-- Brand -->
-                <div class="col-md-6 mb-3">
-                    <label for="brand" class="form-label fw-semibold">
-                        Brand
-                    </label>
-
-                    <input type="text"
-                           class="form-control"
-                           id="brand"
-                           name="brand"
-                           value="{{ request.form.get('brand', '') }}"
-                           placeholder="Enter brand">
-                </div>
-
-
-                <!-- Stock -->
-                <div class="col-md-6 mb-3">
-                    <label for="stock" class="form-label fw-semibold">
-                        Stock
-                    </label>
-
-                    <input type="number"
-                           class="form-control"
-                           id="stock"
-                           name="stock"
-                           value="{{ request.form.get('stock', '0') }}"
-                           min="0"
-                           placeholder="0"
-                           required>
-                </div>
-
-            </div>
-
-
-            <div class="row">
-
-                <!-- Old Price -->
-                <div class="col-md-4 mb-3">
-                    <label for="old_price" class="form-label fw-semibold">
-                        Old Price
-                    </label>
-
-                    <div class="input-group">
-                        <span class="input-group-text">$</span>
-
-                        <input type="number"
-                               class="form-control"
-                               id="old_price"
-                               name="old_price"
-                               value="{{ request.form.get('old_price', '') }}"
-                               min="0"
-                               step="0.01"
-                               placeholder="0.00">
+                    <!-- BRAND -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Brand</label>
+                        <select name="brand" class="lb-select">
+                            <option value="">Select brand</option>
+                            <option value="Adidas">Adidas</option>
+                            <option value="H&M">H&M</option>
+                            <option value="Lululemon">Lululemon</option>
+                            <option value="Nike">Nike</option>
+                            <option value="Zara">Zara</option>
+                            <option value="Levi's">Levi's</option>
+                            <option value="Chanel">Chanel</option>
+                            <option value="Dior">Dior</option>
+                            <option value="Gucci">Gucci</option>
+                            <option value="Prada">Prada</option>
+                            <option value="Louis Vuitton">Louis Vuitton</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                 </div>
+            </section>
 
+            <!-- =====================================================
+                 PRICING
+                 ===================================================== -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Pricing</h2>
+                    <p class="lb-section-description">
+                        Set the original, selling, and discounted prices.
+                    </p>
+                </div>
 
-                <!-- Price -->
-                <div class="col-md-4 mb-3">
-                    <label for="price" class="form-label fw-semibold">
-                        Price
-                    </label>
+                <div class="row g-4">
+                    <!-- ORIGINAL -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Original Price</label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="old_price"
+                                   class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="000.00">
+                        </div>
+                    </div>
 
-                    <div class="input-group">
-                        <span class="input-group-text">$</span>
+                    <!-- SELLING -->
+                    <div class="col-md-4">
+                        <label class="lb-label">
+                            Selling Price <span class="lb-required">*</span>
+                        </label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="price"
+                                   class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="000.00" required>
+                        </div>
+                    </div>
 
-                        <input type="number"
-                               class="form-control"
-                               id="price"
-                               name="price"
-                               value="{{ request.form.get('price', '') }}"
-                               min="0"
-                               step="0.01"
-                               placeholder="0.00"
-                               required>
+                    <!-- DISCOUNT -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Discounted Price</label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="discounted_price"
+                                   class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="00.00">
+                        </div>
                     </div>
                 </div>
+            </section>
 
+            <!-- =================================================
+                 INVENTORY
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Inventory</h2>
+                    <p class="lb-section-description">
+                        Manage stock, rating, and available sizes.
+                    </p>
+                </div>
 
-                <!-- Discounted Price -->
-                <div class="col-md-4 mb-3">
-                    <label for="discounted_price"
-                           class="form-label fw-semibold">
-                        Discounted Price
-                    </label>
+                <div class="row g-4">
+                    <!-- STOCK -->
+                    <div class="col-md-3">
+                        <label class="lb-label">Stock</label>
+                        <input type="number" name="stock" class="lb-input"
+                               min="0" value="0" required>
+                    </div>
 
-                    <div class="input-group">
-                        <span class="input-group-text">$</span>
+                    <!-- RATING -->
+                    <div class="col-md-3">
+                        <label class="lb-label">Rating</label>
+                        <input type="number" name="rating" class="lb-input"
+                               min="0" max="5" step="0.1" value="0">
+                    </div>
 
-                        <input type="number"
-                               class="form-control"
-                               id="discounted_price"
-                               name="discounted_price"
-                               value="{{ request.form.get('discounted_price', '') }}"
-                               min="0"
-                               step="0.01"
-                               placeholder="0.00">
+                    <!-- SIZES -->
+                    <div class="col-md-6">
+                        <label class="lb-label">Available Sizes</label>
+                        <div class="lb-size-list">
+                            {% for size in ['XS','S','M','L','XL','XXL'] %}
+                            <div class="lb-size-item">
+                                <input type="checkbox" name="size" value="{{ size }}" id="size{{ size }}">
+                                <label for="size{{ size }}">{{ size }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
+            </section>
 
-            </div>
-
-
-            <!-- Size -->
-            <div class="mb-3">
-                <label for="size" class="form-label fw-semibold">
-                    Sizes
-                </label>
-
-                <input type="text"
-                       class="form-control"
-                       id="size"
-                       name="size"
-                       value="{{ request.form.get('size', '') }}"
-                       placeholder="S, M, L, XL">
-
-                <div class="form-text">
-                    Separate multiple sizes with commas.
-                    Example: S, M, L, XL
-                </div>
-            </div>
-
-
-            <!-- Description -->
-            <div class="mb-3">
-                <label for="description"
-                       class="form-label fw-semibold">
-                    Description
-                </label>
-
-                <textarea class="form-control"
-                          id="description"
-                          name="description"
-                          rows="5"
-                          placeholder="Enter product description">{{ request.form.get('description', '') }}</textarea>
-            </div>
-
-
-            <div class="row">
-
-                <!-- Rating -->
-                <div class="col-md-6 mb-3">
-                    <label for="rating"
-                           class="form-label fw-semibold">
-                        Rating
-                    </label>
-
-                    <input type="number"
-                           class="form-control"
-                           id="rating"
-                           name="rating"
-                           value="{{ request.form.get('rating', '0') }}"
-                           min="0"
-                           max="5"
-                           step="0.1"
-                           placeholder="0">
+            <!-- =================================================
+                 PRODUCT IMAGES
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Product Images</h2>
+                    <p class="lb-section-description">
+                        Upload multiple images. The first image is used as the main product image.
+                    </p>
                 </div>
 
-
-                <!-- Product Image -->
-                <div class="col-md-6 mb-3">
-                    <label for="image"
-                           class="form-label fw-semibold">
-                        Product Image
-                    </label>
-
-                    <input type="file"
-                           class="form-control"
-                           id="image"
-                           name="image"
-                           accept=".jpg,.jpeg,.png,.gif">
-
-                    <div class="form-text">
-                        Allowed: JPG, JPEG, PNG, GIF
+                <!-- UPLOAD AREA -->
+                <label for="imageInput" class="lb-upload-area" id="uploadArea">
+                    <div class="lb-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                    <div class="lb-upload-title">Drop images here</div>
+                    <div class="lb-upload-text">or choose images from your computer</div>
+                    <span class="lb-browse">Browse Images</span>
+                    <div class="lb-upload-hint">
+                        JPG, JPEG, PNG, WEBP • Multiple images supported
                     </div>
-                </div>
-
-            </div>
-
-
-            <!-- New Product -->
-            <div class="form-check mb-4">
-
-                <input class="form-check-input"
-                       type="checkbox"
-                       id="is_new"
-                       name="is_new"
-                       value="1"
-                       {% if request.form.get('is_new') %}checked{% endif %}>
-
-                <label class="form-check-label fw-semibold"
-                       for="is_new">
-                    Mark as New Product
                 </label>
 
-            </div>
+                <input type="file" id="imageInput" name="images"
+                       accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                <input type="hidden" name="main_image_index" id="mainImageIndex" value="0">
+                <!-- PREVIEW -->
+                <div class="lb-preview-wrapper" id="previewWrapper">
+                    <div class="lb-preview-header">
+                        <div class="lb-preview-title">Selected Images</div>
+                        <div class="lb-preview-help">
+                            Click ★ to make an image the main image
+                        </div>
+                    </div>
+                    <div class="lb-image-grid" id="imageGrid"></div>
+                </div>
+            </section>
 
+            <!-- =================================================
+                 DESCRIPTION
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Description</h2>
+                    <p class="lb-section-description">
+                        Tell customers about this product.
+                    </p>
+                </div>
+                <textarea name="description" class="lb-textarea"
+                          placeholder="Describe the material, fit, style, details and other important information..."></textarea>
+            </section>
 
-            <!-- Buttons -->
-            <div class="d-flex gap-2">
-
-                <button type="submit"
-                        class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i>
-                    Add Product
-                </button>
-
-                <a href="{{ url_for('admin_products.products') }}"
-                   class="btn btn-secondary">
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
+            <div class="lb-form-footer">
+                <a href="{{ url_for('admin_products.products') }}" class="btn btn-secondary ms-2">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
                     Cancel
                 </a>
 
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Save Product
+                </button>
             </div>
-
-        </form>
-
-    </div>
-
+        </div>
+    </form>
 </div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("imageInput");
+    const imageGrid = document.getElementById("imageGrid");
+    const previewWrapper = document.getElementById("previewWrapper");
+    const uploadArea = document.getElementById("uploadArea");
+    const mainImageIndex = document.getElementById("mainImageIndex");
+
+    let selectedFiles = [];
+
+    /* =====================================================
+       FILE INPUT
+       ===================================================== */
+    imageInput.addEventListener("change", function (event) {
+        addFiles(Array.from(event.target.files));
+    });
+
+    /* =====================================================
+       DRAG & DROP
+       ===================================================== */
+    uploadArea.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        uploadArea.classList.add("dragging");
+    });
+
+    uploadArea.addEventListener("dragleave", function () {
+        uploadArea.classList.remove("dragging");
+    });
+
+    uploadArea.addEventListener("drop", function (event) {
+        event.preventDefault();
+        uploadArea.classList.remove("dragging");
+        addFiles(Array.from(event.dataTransfer.files));
+    });
+
+    /* =====================================================
+       ADD FILES
+       ===================================================== */
+    function addFiles(files) {
+        files.forEach(function (file) {
+            if (!file.type.startsWith("image/")) return;
+
+            const duplicate = selectedFiles.some(function (existing) {
+                return existing.name === file.name && existing.size === file.size;
+            });
+
+            if (!duplicate) selectedFiles.push(file);
+        });
+
+        renderPreviews();
+    }
+
+    /* =====================================================
+       RENDER PREVIEWS
+       ===================================================== */
+    function renderPreviews() {
+        imageGrid.innerHTML = "";
+
+        if (selectedFiles.length === 0) {
+            previewWrapper.style.display = "none";
+            mainImageIndex.value = "0";
+            return;
+        }
+
+        previewWrapper.style.display = "block";
+
+        selectedFiles.forEach(function (file, index) {
+            const card = document.createElement("div");
+            card.className = "lb-image-card";
+
+            const img = document.createElement("img");
+            const url = URL.createObjectURL(file);
+            img.src = url;
+            img.onload = function () {
+                URL.revokeObjectURL(url);
+            };
+
+            /* IMAGE ACTIONS */
+            const actions = document.createElement("div");
+            actions.className = "lb-image-actions";
+
+            /* MAIN BUTTON */
+            const mainButton = document.createElement("button");
+            mainButton.type = "button";
+            mainButton.className = "lb-image-action";
+            mainButton.innerHTML =
+                index === parseInt(mainImageIndex.value)
+                    ? '<i class="bi bi-star-fill"></i>'
+                    : '<i class="bi bi-star"></i>';
+            mainButton.title = "Set as main image";
+
+            mainButton.addEventListener("click", function () {
+                mainImageIndex.value = index;
+                renderPreviews();
+            });
+
+            /* DELETE BUTTON */
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "lb-image-action delete";
+            deleteButton.innerHTML = '<i class="bi bi-trash3"></i>';
+            deleteButton.title = "Remove image";
+
+            deleteButton.addEventListener("click", function () {
+                selectedFiles.splice(index, 1);
+
+                let currentMain = parseInt(mainImageIndex.value);
+
+                if (selectedFiles.length === 0) {
+                    mainImageIndex.value = "0";
+                } else if (index === currentMain) {
+                    mainImageIndex.value = "0";
+                } else if (index < currentMain) {
+                    mainImageIndex.value = currentMain - 1;
+                }
+
+                renderPreviews();
+            });
+
+            actions.appendChild(mainButton);
+            actions.appendChild(deleteButton);
+
+            card.appendChild(img);
+            card.appendChild(actions);
+
+            /* MAIN BADGE */
+            if (index === parseInt(mainImageIndex.value)) {
+                const badge = document.createElement("div");
+                badge.className = "lb-main-badge";
+                badge.innerHTML = '<i class="bi bi-star-fill me-1"></i> Main';
+                card.appendChild(badge);
+            }
+
+            imageGrid.appendChild(card);
+        });
+
+        /*
+         * Rebuild the FileList so that the
+         * files removed by the user are not submitted.
+         */
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(function (file) {
+            dataTransfer.items.add(file);
+        });
+        imageInput.files = dataTransfer.files;
+    }
+});
+</script>
 
 {% endblock %}

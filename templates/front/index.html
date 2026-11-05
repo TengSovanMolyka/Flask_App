@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>La Beauté Studio</title>
+
     {% include 'front/styles.html' %}
 </head>
 
@@ -12,99 +14,279 @@
 
 {% include 'front/share/navbar.html' %}
 
-<!-- HERO SECTION (compact height) -->
+
+<!-- =========================================================
+     HERO SECTION
+========================================================= -->
+
 <section class="hero-section"
-         style="background-image: url('https://images.unsplash.com/photo-1697735854267-0eb338a55a50?q=80&w=1985&auto=format&fit=crop');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;">
+         style="
+            background-image: url('https://images.unsplash.com/photo-1697735854267-0eb338a55a50?q=80&w=1985&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+         ">
+
     <div class="container">
+
         <div class="row align-items-center py-5">
+
             <div class="col-lg-6">
-                <span class="badge bg-light text-dark mb-3 px-3 py-2">New Fashion Collection 2026</span>
-                <h2 class="hero-title">Discover Your Style With La Beauté</h2>
+
+                <span class="badge bg-light text-dark mb-3 px-3 py-2">
+                    New Fashion Collection 2026
+                </span>
+
+                <h2 class="hero-title">
+                    Discover Your Style With La Beauté
+                </h2>
+
                 <p class="hero-text">
                     Explore trendy fashion pieces, stylish outfits,
                     premium sneakers, handbags, and accessories
                     made for modern lifestyles.
                 </p>
+
                 <div class="mt-3">
-                    <a href="/products" class="btn btn-dark btn-lg me-3">Shop Now</a>
-                    <a href="/products" class="btn btn-light btn-lg me-3">Explore</a>
+
+                    <a href="/products"
+                       class="btn btn-dark btn-lg me-3">
+                        Shop Now
+                    </a>
+
+                    <a href="/products"
+                       class="btn btn-light btn-lg me-3">
+                        Explore
+                    </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </section>
 
-<!-- PRODUCTS (limit to 6 items) -->
+
+<!-- =========================================================
+     TRENDING PRODUCTS
+========================================================= -->
+
 <section class="py-5">
+
     <div class="container">
 
-        <!-- Header -->
+        <!-- Section Header -->
+
         <div class="d-flex justify-content-between align-items-center mb-4">
+
             <div>
-                <h3 class="fw-bold">Trending Fashion</h3>
-                <p class="text-muted mb-0">Popular styles this season</p>
+
+                <h3 class="fw-bold">
+                    Trending Fashion
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Popular styles this season
+                </p>
+
             </div>
-            <a href="/products" class="btn btn-dark">View All</a>
+
+            <a href="/products"
+               class="btn btn-dark">
+                View All
+            </a>
+
         </div>
 
+
         <!-- Product Cards -->
+
         <div class="row g-4">
+
             {% for product in products[:6] %}
+
                 <div class="col-md-6 col-lg-4">
+
                     <div class="card product-card border-0 shadow-sm h-100">
-                        <!-- FAVORITE BUTTON -->
+
+
+                        <!-- =================================================
+                             WISHLIST BUTTON
+                        ================================================= -->
+
                         <form method="POST"
-                              action="{{ url_for('front.toggle_wishlist', product_id=product['_id']) }}"
-                              class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+                              action="{{ url_for(
+                                  'front.toggle_wishlist',
+                                  product_id=product['_id']
+                              ) }}"
+                              class="position-absolute top-0 end-0 m-3"
+                              style="z-index: 10;">
+
                             <button type="submit"
                                     class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
-                                    style="width:42px; height:42px; line-height:1;"
+                                    style="
+                                        width: 42px;
+                                        height: 42px;
+                                        line-height: 1;
+                                    "
                                     title="Add to Wishlist">
+
                                 {% if product._id|string in session.get('wishlist', [])|map('string')|list %}
+
                                     <i class="bi bi-heart-fill text-danger fs-5 d-flex align-items-center justify-content-center"></i>
+
                                 {% else %}
+
                                     <i class="bi bi-heart fs-5 d-flex align-items-center justify-content-center"></i>
+
                                 {% endif %}
+
                             </button>
+
                         </form>
 
-                        <img src="{{ product.image }}"
-                             class="card-img-top"
-                             alt="{{ product.title }}">
+
+                        <!-- =================================================
+                             PRODUCT IMAGE
+                        ================================================= -->
+
+                        {% if product.image and product.image.startswith('http') %}
+
+                            <!-- External Image -->
+
+                            <img src="{{ product.image }}"
+                                 class="card-img-top"
+                                 alt="{{ product.title }}"
+                                 onerror="this.src='{{ url_for(
+                                     'static',
+                                     filename='uploads/products/product-placeholder.jpg'
+                                 ) }}'">
+
+                        {% else %}
+
+                            <!-- Local Image -->
+
+                            <img src="{{ url_for(
+                                'static',
+                                filename='uploads/products/' ~ product.image
+                            ) }}"
+                                 class="card-img-top"
+                                 alt="{{ product.title }}"
+                                 onerror="this.src='{{ url_for(
+                                     'static',
+                                     filename='uploads/products/product-placeholder.jpg'
+                                 ) }}'">
+
+                        {% endif %}
+
+
+                        <!-- =================================================
+                             PRODUCT INFORMATION
+                        ================================================= -->
 
                         <div class="card-body d-flex flex-column">
-                            <p class="text-muted mb-1">{{ product.category }}</p>
-                            <h5 class="mt-1">{{ product.title }}</h5>
-                            <p class="text-muted pro-description flex-grow-1">{{ product.description }}</p>
+
+                            <!-- Category -->
+
+                            <p class="text-muted mb-1">
+                                {{ product.category }}
+                            </p>
+
+
+                            <!-- Product Name -->
+
+                            <h5 class="mt-1">
+                                {{ product.title }}
+                            </h5>
+
+
+                            <!-- Description -->
+
+                            <p class="text-muted pro-description flex-grow-1">
+                                {{ product.description }}
+                            </p>
+
+
+                            <!-- =================================================
+                                 PRICE + RATING
+                            ================================================= -->
 
                             <div class="d-flex justify-content-between align-items-center mt-2">
+
+                                <!-- Price -->
+
                                 <div class="d-flex align-items-center gap-2">
-                                    <h5 class="mb-0">$ {{ product.price }}</h5>
-                                    <span class="text-muted text-decoration-line-through">$ {{ product.oldPrice }}</span>
+
+                                    <h5 class="mb-0">
+                                        ${{ "%.2f"|format(product.price|float) }}
+                                    </h5>
+
+
+                                    {% if product.oldPrice is not none
+                                          and product.oldPrice|float > product.price|float %}
+
+                                        <span class="text-muted text-decoration-line-through">
+                                            ${{ "%.2f"|format(product.oldPrice|float) }}
+                                        </span>
+
+                                    {% endif %}
+
                                 </div>
-                                <span class="badge bg-dark">{{ product.rating }} ⭐️</span>
+
+
+                                <!-- Rating -->
+
+                                <span class="badge bg-dark">
+
+                                    {{ "%.1f"|format(product.rating|float) }}
+                                    ⭐️
+
+                                </span>
+
                             </div>
+
+
+                            <!-- =================================================
+                                 VIEW PRODUCT BUTTON
+                            ================================================= -->
 
                             <a class="btn btn-dark w-100 mt-3"
                                href="/product/{{ product._id }}">
+
                                 View Product
+
                             </a>
+
                         </div>
 
                     </div>
+
                 </div>
+
             {% endfor %}
+
         </div>
 
     </div>
+
 </section>
 
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
 {% include 'front/share/footer.html' %}
+
+
+<!-- Bootstrap JavaScript -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>
+

@@ -2,269 +2,515 @@
 
 {% block content %}
 
-<h2 class="fw-bold mb-4 text-uppercase">Edit Product</h2>
+<div class="lb-product-page">
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+    <div class="lb-page-header">
+        <div>
+            <div class="lb-eyebrow">Products</div>
+            <h1 class="lb-page-title">Edit product</h1>
+            <p class="lb-page-subtitle">
+                Update the information of this La Beauté product.
+            </p>
+        </div>
+        <a href="{{ url_for('admin_products.products') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle me-1"></i>
+            Back to Products
+        </a>
+    </div>
 
-<div class="card shadow-sm border-0">
-
-
-<!-- Card Header -->
-<div class="card-header">
-    <span class="fw-semibold">
-        <i class="bi bi-pencil-square"></i>
-        Update Product Information
-    </span>
-</div>
-
-<!-- Card Body -->
-<div class="card-body">
-
+    <!-- =====================================================
+         FORM
+         ===================================================== -->
     <form method="POST"
           action="{{ url_for('admin_products.edit_product', product_id=product.id) }}"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+          id="productForm">
 
-        <div class="row">
+        <!-- CSRF -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <!-- Product Title -->
-            <div class="col-md-8 mb-3">
-                <label class="form-label fw-semibold">
-                    Product Title
-                </label>
-
-                <input type="text"
-                       name="title"
-                       class="form-control"
-                       value="{{ product.title }}"
-                       required>
-            </div>
-
-            <!-- New Product -->
-            <div class="col-md-4 mb-3">
-                <label class="form-label fw-semibold d-block">
-                    Product Status
-                </label>
-
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           name="is_new"
-                           id="is_new"
-                           {% if product.is_new %}checked{% endif %}>
-
-                    <label class="form-check-label" for="is_new">
-                        Mark as New Product
-                    </label>
+        <div class="lb-form-card">
+            <!-- =================================================
+                 BASIC INFORMATION
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Basic Information</h2>
+                    <p class="lb-section-description">
+                        Update the essential information about this product.
+                    </p>
                 </div>
-            </div>
 
-            <!-- Category -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Category
-                </label>
+                <div class="row g-4">
+                    <!-- PRODUCT NAME -->
+                    <div class="col-lg-8">
+                        <label class="lb-label">
+                            Product Name <span class="lb-required">*</span>
+                        </label>
+                        <input type="text" name="name" class="lb-input"
+                               placeholder="e.g. Button-Front Top with Collar"
+                               value="{{ product.name or '' }}" required>
+                    </div>
 
-                <input type="text"
-                       name="category"
-                       class="form-control"
-                       value="{{ product.category }}"
-                       required>
-            </div>
+                    <!-- STATUS -->
+                    <div class="col-lg-4">
+                        <label class="lb-label">Product Status</label>
+                        <div class="lb-status-box">
+                            <div class="lb-status-info">
+                                <div class="lb-status-icon"><i class="bi bi-stars"></i></div>
+                                <div>
+                                    <p class="lb-status-title">New Product</p>
+                                    <p class="lb-status-text">Show as new collection</p>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input lb-switch"
+                                       type="checkbox" name="is_new" value="1" id="isNew"
+                                       {% if product.is_new %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Type -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Product Type
-                </label>
+                    <!-- CATEGORY -->
+                    <div class="col-md-4">
+                        <label class="lb-label">
+                            Category <span class="lb-required">*</span>
+                        </label>
+                        <select name="category_id" class="lb-select" required>
+                            <option value="">Select category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}"
+                                    {% if product.category_id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <input type="text"
-                       name="type"
-                       class="form-control"
-                       value="{{ product.type }}"
-                       required>
-            </div>
+                    <!-- TYPE -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Product Type</label>
+                        <input type="text" name="type" class="lb-input"
+                               placeholder="e.g. Women's Top"
+                               value="{{ product.type or '' }}">
+                    </div>
 
-            <!-- Brand -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Brand
-                </label>
+                    <!-- BRAND -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Brand</label>
+                        <select name="brand" class="lb-select">
+                            <option value="">Select brand</option>
+                            <option value="Adidas" {% if product.brand == 'Adidas' %}selected{% endif %}>Adidas</option>
+                            <option value="H&M" {% if product.brand == 'H&M' %}selected{% endif %}>H&M</option>
+                            <option value="Lululemon" {% if product.brand == 'Lululemon' %}selected{% endif %}>Lululemon</option>
+                            <option value="Nike" {% if product.brand == 'Nike' %}selected{% endif %}>Nike</option>
+                            <option value="Zara" {% if product.brand == 'Zara' %}selected{% endif %}>Zara</option>
+                            <option value="Levi's" {% if product.brand == "Levi's" %}selected{% endif %}>Levi's</option>
+                            <option value="Chanel" {% if product.brand == 'Chanel' %}selected{% endif %}>Chanel</option>
+                            <option value="Dior" {% if product.brand == 'Dior' %}selected{% endif %}>Dior</option>
+                            <option value="Gucci" {% if product.brand == 'Gucci' %}selected{% endif %}>Gucci</option>
+                            <option value="Prada" {% if product.brand == 'Prada' %}selected{% endif %}>Prada</option>
+                            <option value="Louis Vuitton" {% if product.brand == 'Louis Vuitton' %}selected{% endif %}>Louis Vuitton</option>
+                            <option value="Other" {% if product.brand == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
 
-                <input type="text"
-                       name="brand"
-                       class="form-control"
-                       value="{{ product.brand or '' }}">
-            </div>
+            <!-- =================================================
+                 PRICING
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Pricing</h2>
+                    <p class="lb-section-description">
+                        Update the original, selling, and discounted prices.
+                    </p>
+                </div>
 
-            <!-- Stock -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Stock
-                </label>
+                <div class="row g-4">
+                    <!-- ORIGINAL PRICE -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Original Price</label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="old_price" class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="000.00"
+                                   value="{{ product.old_price if product.old_price is not none else '' }}">
+                        </div>
+                    </div>
 
-                <input type="number"
-                       name="stock"
-                       class="form-control"
-                       value="{{ product.stock }}"
-                       min="0"
-                       required>
-            </div>
+                    <!-- SELLING PRICE -->
+                    <div class="col-md-4">
+                        <label class="lb-label">
+                            Selling Price <span class="lb-required">*</span>
+                        </label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="price" class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="000.00"
+                                   value="{{ product.price if product.price is not none else '' }}" required>
+                        </div>
+                    </div>
 
-            <!-- Old Price -->
-            <div class="col-md-4 mb-3">
-                <label class="form-label fw-semibold">
-                    Old Price ($)
-                </label>
+                    <!-- DISCOUNTED PRICE -->
+                    <div class="col-md-4">
+                        <label class="lb-label">Discounted Price</label>
+                        <div class="lb-price-wrap">
+                            <span class="lb-price-symbol">$</span>
+                            <input type="number" name="discounted_price" class="lb-input lb-price-input"
+                                   step="0.01" min="0" placeholder="00.00"
+                                   value="{{ product.discounted_price if product.discounted_price is not none else '' }}">
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                <input type="number"
-                       name="old_price"
-                       class="form-control"
-                       value="{{ product.old_price if product.old_price is not none else '' }}"
-                       min="0"
-                       step="0.01">
-            </div>
+            <!-- =================================================
+                 INVENTORY
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Inventory</h2>
+                    <p class="lb-section-description">
+                        Manage stock, rating, and available sizes.
+                    </p>
+                </div>
 
-            <!-- Price -->
-            <div class="col-md-4 mb-3">
-                <label class="form-label fw-semibold">
-                    Price ($)
-                </label>
+                <div class="row g-4">
+                    <!-- STOCK -->
+                    <div class="col-md-3">
+                        <label class="lb-label">Stock</label>
+                        <input type="number" name="stock" class="lb-input"
+                               min="0" value="{{ product.stock if product.stock is not none else 0 }}" required>
+                    </div>
 
-                <input type="number"
-                       name="price"
-                       class="form-control"
-                       value="{{ product.price }}"
-                       min="0"
-                       step="0.01"
-                       required>
-            </div>
+                    <!-- RATING -->
+                    <div class="col-md-3">
+                        <label class="lb-label">Rating</label>
+                        <input type="number" name="rating" class="lb-input"
+                               min="0" max="5" step="0.1"
+                               value="{{ product.rating if product.rating is not none else 0 }}">
+                    </div>
 
-            <!-- Discounted Price -->
-            <div class="col-md-4 mb-3">
-                <label class="form-label fw-semibold">
-                    Discounted Price ($)
-                </label>
+                    <!-- SIZES -->
+                    <div class="col-md-6">
+                        <label class="lb-label">Available Sizes</label>
+                        <div class="lb-size-list">
+                            {% for size in ['XS','S','M','L','XL','XXL'] %}
+                            <div class="lb-size-item">
+                                <input type="checkbox" name="size" value="{{ size }}" id="size{{ size }}"
+                                       {% if size in (product.size or []) %}checked{% endif %}>
+                                <label for="size{{ size }}">{{ size }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                <input type="number"
-                       name="discounted_price"
-                       class="form-control"
-                       value="{{ product.discounted_price if product.discounted_price is not none else '' }}"
-                       min="0"
-                       step="0.01">
-            </div>
+            <!-- =================================================
+                 PRODUCT IMAGES
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">
+                        <i class="bi bi-images me-2"></i>
+                        Product Images
+                    </h2>
+                    <p class="lb-section-description">
+                        Manage your product gallery and choose the main image.
+                    </p>
+                </div>
 
-            <!-- Sizes -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Sizes
-                </label>
+                <!-- EXISTING PRODUCT IMAGES -->
+                {% if product.images %}
+                <div class="lb-preview-wrapper mb-4">
+                    <div class="lb-preview-header">
+                        <div>
+                            <div class="lb-preview-title">Current Images</div>
+                            <div class="lb-preview-help">
+                                Click the star button to change the main image.
+                            </div>
+                        </div>
+                    </div>
 
-                <input type="text"
-                       name="size"
-                       class="form-control"
-                       value="{{ product.size|join(', ') if product.size else '' }}"
-                       placeholder="Example: S, M, L, XL">
+                    <div class="lb-image-grid">
+                        {% for image in product.images %}
+                        <div class="lb-image-card" data-existing-image="{{ image.name }}">
+                            <img src="{{ url_for('static', filename='uploads/products/' ~ image.name) }}"
+                                 alt="{{ product.name }}" loading="lazy">
 
-                <small class="text-muted">
-                    Separate sizes with commas.
-                </small>
-            </div>
+                            {% if product.thumbnail == image.name %}
+                            <div class="lb-main-badge">
+                                <i class="bi bi-star-fill me-1"></i>
+                                Main
+                            </div>
+                            {% endif %}
 
-            <!-- Rating -->
-            <div class="col-md-6 mb-3">
-                <label class="form-label fw-semibold">
-                    Rating
-                </label>
+                            <div class="lb-image-actions">
+                                <button type="button"
+                                        class="lb-image-action existing-main-image-btn"
+                                        title="Set as main image"
+                                        data-image="{{ image.name }}">
+                                    <i class="bi bi-star"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
-                <input type="number"
-                       name="rating"
-                       class="form-control"
-                       value="{{ product.rating }}"
-                       min="0"
-                       max="5"
-                       step="0.1">
-            </div>
+                <!-- UPLOAD NEW IMAGES -->
+                <div class="lb-upload-area" id="uploadArea">
+                    <div class="lb-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                    <div class="lb-upload-title">Add More Images</div>
+                    <div class="lb-upload-text">
+                        Drag & drop your images here or
+                        <label for="imageInput" class="lb-browse">browse</label>
+                    </div>
+                    <div class="lb-upload-hint">JPG, JPEG, PNG, WEBP or GIF</div>
+                    <input type="file" id="imageInput" name="images"
+                           accept=".jpg,.jpeg,.png,.webp,.gif" multiple hidden>
+                </div>
 
-            <!-- Description -->
-            <div class="col-12 mb-3">
-                <label class="form-label fw-semibold">
-                    Description
-                </label>
+                <!-- NEW IMAGE PREVIEW -->
+                <div class="lb-preview-wrapper mt-4" id="previewWrapper" style="display:none;">
+                    <div class="lb-preview-header">
+                        <div>
+                            <div class="lb-preview-title">New Images</div>
+                            <div class="lb-preview-help">
+                                Click the star to make a new image the main image.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lb-image-grid" id="imageGrid"></div>
+                </div>
+
+                <!-- MAIN IMAGE -->
+                <input type="hidden" name="main_image" id="mainImage"
+                       value="{{ product.thumbnail or '' }}">
+            </section>
+
+            <!-- =================================================
+                 DESCRIPTION
+                 ================================================= -->
+            <section class="lb-section">
+                <div class="lb-section-heading">
+                    <h2 class="lb-section-title">Description</h2>
+                    <p class="lb-section-description">
+                        Tell customers about this product.
+                    </p>
+                </div>
 
                 <textarea name="description"
-                          class="form-control"
-                          rows="5"
-                          placeholder="Enter product description...">{{ product.description or '' }}</textarea>
-            </div>
+                          class="lb-textarea"
+                          placeholder="Describe the material, fit, style, details and other important information...">
+                    {{ product.description or '' }}
+                </textarea>
+            </section>
 
-            <!-- Current Image -->
-            <div class="col-md-6 mb-3">
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
+            <div class="lb-form-footer">
+                <a href="{{ url_for('admin_products.products') }}" class="btn btn-secondary ms-2">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    Cancel
+                </a>
 
-                <label class="form-label fw-semibold">
-                    Current Product Image
-                </label>
-
-                <div class="mb-2">
-
-                    {% if product.image %}
-
-                        <img src="{{ url_for('static', filename='uploads/products/' ~ product.image) }}"
-                             alt="{{ product.title }}"
-                             class="img-thumbnail"
-                             style="width: 150px; height: 150px; object-fit: cover;"
-                             onerror="this.style.display='none';">
-
-                    {% else %}
-
-                        <div class="border rounded p-4 text-muted">
-                            No image available
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            <!-- New Image -->
-            <div class="col-md-6 mb-3">
-
-                <label class="form-label fw-semibold">
-                    Replace Product Image
-                </label>
-
-                <input type="file"
-                       name="image"
-                       class="form-control"
-                       accept=".jpg,.jpeg,.png,.gif,.webp">
-
-                <small class="text-muted">
-                    Leave empty to keep the current image.
-                </small>
-
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-clipboard2-check me-1"></i>
+                    Update Product
+                </button>
             </div>
 
         </div>
-
-        <!-- Buttons -->
-        <div class="mt-4">
-
-            <button type="submit"
-                    class="btn btn-primary">
-                <i class="bi bi-save"></i>
-                Update Product
-            </button>
-
-            <a href="{{ url_for('admin_products.products') }}"
-               class="btn btn-secondary ms-2">
-                <i class="bi bi-arrow-left"></i>
-                Back to Products
-            </a>
-
-        </div>
-
     </form>
-
 </div>
 
-</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("imageInput");
+    const imageGrid = document.getElementById("imageGrid");
+    const previewWrapper = document.getElementById("previewWrapper");
+    const uploadArea = document.getElementById("uploadArea");
+    const mainImage = document.getElementById("mainImage");
+    const productForm = document.getElementById("productForm");
+
+    let selectedFiles = [];
+
+    // EXISTING IMAGE → SET AS MAIN
+    document.querySelectorAll(".existing-main-image-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            mainImage.value = this.dataset.image;
+            updateMainImageDisplay();
+            renderPreviews();
+        });
+    });
+
+    // UPDATE MAIN IMAGE DISPLAY
+    function updateMainImageDisplay() {
+        document.querySelectorAll("[data-existing-image]").forEach(function (card) {
+            const filename = card.dataset.existingImage;
+            const oldBadge = card.querySelector(".lb-main-badge");
+
+            if (filename === mainImage.value) {
+                if (!oldBadge) {
+                    const badge = document.createElement("div");
+                    badge.className = "lb-main-badge";
+                    badge.innerHTML = '<i class="bi bi-star-fill me-1"></i> Main';
+                    card.appendChild(badge);
+                }
+            } else {
+                if (oldBadge) oldBadge.remove();
+            }
+        });
+    }
+
+    // FILE INPUT
+    imageInput.addEventListener("change", function () {
+        addFiles(this.files);
+    });
+
+    // DRAG & DROP
+    uploadArea.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        uploadArea.classList.add("dragging");
+    });
+
+    uploadArea.addEventListener("dragleave", function () {
+        uploadArea.classList.remove("dragging");
+    });
+
+    uploadArea.addEventListener("drop", function (event) {
+        event.preventDefault();
+        uploadArea.classList.remove("dragging");
+        addFiles(event.dataTransfer.files);
+    });
+
+    // ADD FILES
+    function addFiles(files) {
+        Array.from(files).forEach(function (file) {
+            if (!file.type.startsWith("image/")) return;
+
+            const exists = selectedFiles.some(function (existingFile) {
+                return (
+                    existingFile.name === file.name &&
+                    existingFile.size === file.size &&
+                    existingFile.lastModified === file.lastModified
+                );
+            });
+
+            if (!exists) selectedFiles.push(file);
+        });
+
+        renderPreviews();
+    }
+
+    // RENDER NEW IMAGE PREVIEWS
+    function renderPreviews() {
+        imageGrid.innerHTML = "";
+
+        if (selectedFiles.length === 0) {
+            previewWrapper.style.display = "none";
+            updateFileInput();
+            return;
+        }
+
+        previewWrapper.style.display = "block";
+
+        selectedFiles.forEach(function (file, index) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const card = document.createElement("div");
+                card.className = "lb-image-card";
+
+                card.innerHTML = `
+                    <img src="${event.target.result}" alt="${file.name}" loading="lazy">
+                    <div class="lb-image-actions">
+                        <button type="button" class="lb-image-action new-main-image-btn"
+                                title="Set as main image" data-index="${index}">
+                            <i class="bi bi-star"></i>
+                        </button>
+                        <button type="button" class="lb-image-action remove-image-btn"
+                                title="Remove image" data-index="${index}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                // MAIN IMAGE BUTTON
+                const mainButton = card.querySelector(".new-main-image-btn");
+                mainButton.addEventListener("click", function () {
+                    mainImage.value = "__NEW__" + index;
+                    updateMainImageDisplay();
+                    renderPreviews();
+                });
+
+                // MAIN BADGE
+                if (mainImage.value === "__NEW__" + index) {
+                    const badge = document.createElement("div");
+                    badge.className = "lb-main-badge";
+                    badge.innerHTML = '<i class="bi bi-star-fill me-1"></i> Main';
+                    card.appendChild(badge);
+                }
+
+                // REMOVE IMAGE
+                const removeButton = card.querySelector(".remove-image-btn");
+                removeButton.addEventListener("click", function () {
+                    const removedIndex = index;
+                    const removedWasMain = mainImage.value === "__NEW__" + removedIndex;
+
+                    selectedFiles.splice(removedIndex, 1);
+
+                    if (removedWasMain) {
+                        const existingMain = document.querySelector("[data-existing-image]");
+                        if (existingMain) {
+                            mainImage.value = existingMain.dataset.existingImage;
+                        } else {
+                            mainImage.value = "";
+                        }
+                    }
+
+                    // Fix index if another new image was selected as main
+                    if (mainImage.value.startsWith("__NEW__")) {
+                        const currentIndex = parseInt(mainImage.value.replace("__NEW__", ""), 10);
+                        if (!isNaN(currentIndex) && currentIndex > removedIndex) {
+                            mainImage.value = "__NEW__" + (currentIndex - 1);
+                        }
+                    }
+
+                    renderPreviews();
+                });
+
+                imageGrid.appendChild(card);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        updateFileInput();
+    }
+
+    // UPDATE FILE INPUT
+    function updateFileInput() {
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(function (file) {
+            dataTransfer.items.add(file);
+        });
+        imageInput.files = dataTransfer.files;
+    }
+
+    // FORM SUBMIT
+    productForm.addEventListener("submit", function () {
+        updateFileInput();
+    });
+
+    updateMainImageDisplay();
+});
+</script>
 
 {% endblock %}
