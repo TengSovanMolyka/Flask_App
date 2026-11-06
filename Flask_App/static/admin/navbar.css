@@ -1,0 +1,94 @@
+/* Navbar Container */
+.admin-navbar {
+    position: fixed;
+    top: 0;
+    left: 260px; /* matches sidebar width */
+    right: 0;
+    height: 77px;
+    background-color: #ffffff;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    /*box-shadow: 0 1px 10px rgba(0, 0, 0, 0.08);*/
+    border-bottom: 1px solid #e9ecef;
+    z-index: 999;
+}
+
+/* Search Bar */
+.admin-search {
+    width: 250px;
+    border: solid 1px var(--primary);
+    border-radius: 10px;
+}
+.admin-search .input-group {
+    background: #f9fafb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.admin-search .input-group-text {
+    background: #f9fafb;
+    border: none;
+}
+.admin-search .form-control {
+    background: #f9fafb;
+    border: none;
+    box-shadow: none;
+}
+
+/* Notification Button */
+.notification-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--bgblack);
+    color: #fff;
+    border: none;
+    transition: background .2s ease, color .2s ease;
+}
+.notification-btn:hover {
+    background: #545454;
+    color: #fff;
+}
+
+/* Profile Avatar */
+.admin-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Profile Link */
+.dropdown .nav-link {
+    color: #212529;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.3s;
+}
+
+.dropdown .nav-link:hover {
+    color: #0d6efd;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    border-radius: 12px;
+    padding: 10px;
+}
+.dropdown-item {
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: background .2s ease;
+}
+.dropdown-item:hover {
+    background: #f3f4f6;
+    color: #0054ff;
+}
+.dropdown-item.text-danger {
+    color: #dc3545;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.08);
+    color: #7b0b0b;
+}

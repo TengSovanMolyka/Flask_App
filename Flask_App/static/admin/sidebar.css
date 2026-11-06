@@ -1,0 +1,97 @@
+/* Sidebar Container */
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background-color: var(--bgblack);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+/* Logo/Header */
+.sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+/* Navigation */
+.sidebar-nav {
+    flex-grow: 1;
+    padding: 1rem 0;
+}
+
+/* Sidebar Navigation Links */
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.25rem;
+    color: #cfcfcf;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    font-size: 0.95rem;
+}
+
+/* Icon + Text Group */
+.sidebar-nav .nav-link span {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* space between icon and text */
+}
+
+/* Chevron Icon */
+.sidebar-nav .nav-link i.bi-chevron-down {
+    margin-left: auto; /* ensures it stays on the far right */
+    font-size: 1rem;
+    color: #cfcfcf;
+    transition: transform 0.3s;
+}
+
+/* Hover Effect */
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Active State */
+.sidebar-nav .nav-link.active {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Footer */
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ff6b6b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.logout-link:hover {
+    color: #ff3b3b;
+}

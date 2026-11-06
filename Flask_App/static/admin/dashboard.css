@@ -1,0 +1,49 @@
+/* ==========================
+   VARIABLES
+========================== */
+:root {
+    --primary: #111827;
+    --secondary: #6b7280;
+    --background: #e1e1e1;
+    --bgblack: #171717;
+    --card: #ffffff;
+
+    --border: #d9d9d9;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #f59e0b;
+    --info: #2563eb;
+
+    --radius: 16px;
+    --shadow: 0 5px 20px rgba(0,0,0,.05);
+}
+
+/* ==========================
+   BODY
+========================== */
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--background);
+    color: #111827;
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
