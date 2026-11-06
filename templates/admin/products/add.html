@@ -95,6 +95,7 @@
                         <select name="brand" class="lb-select">
                             <option value="">Select brand</option>
                             <option value="Adidas">Adidas</option>
+                            <option value="Coach">Coach</option>
                             <option value="H&M">H&M</option>
                             <option value="Lululemon">Lululemon</option>
                             <option value="Nike">Nike</option>
@@ -190,7 +191,7 @@
                     <div class="col-md-6">
                         <label class="lb-label">Available Sizes</label>
                         <div class="lb-size-list">
-                            {% for size in ['XS','S','M','L','XL','XXL'] %}
+                            {% for size in ['XS','S','M','L','XL','XXL','One Size'] %}
                             <div class="lb-size-item">
                                 <input type="checkbox" name="size" value="{{ size }}" id="size{{ size }}">
                                 <label for="size{{ size }}">{{ size }}</label>

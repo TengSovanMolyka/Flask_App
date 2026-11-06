@@ -1,7 +1,6 @@
 import json
 from flask import Blueprint, request, redirect, url_for, flash, make_response, render_template
-from product import get_product_by_id
-from helper import get_cart_items, get_cart_data
+from helper import get_product_by_id, get_cart_items, get_cart_data
 
 cart_bp = Blueprint("cart", __name__)
 
@@ -87,7 +86,10 @@ def add_to_cart():
             "image": product["image"],
         })
 
-    return __save_cart_and_redirect(cart_products)
+    return __save_cart_and_redirect(
+        cart_products,
+        checkout=request.form.get("next") == "checkout"
+    )
 
 
 # ==========================================================
@@ -160,8 +162,9 @@ def remove_from_cart(product_id):
 # ==========================================================
 # SAVE CART
 # ==========================================================
-def __save_cart_and_redirect(cart_products):
-    response = make_response(redirect(url_for("cart.cart")))
+def __save_cart_and_redirect(cart_products, checkout=False):
+    destination = url_for("orders.checkout") if checkout else url_for("cart.cart")
+    response = make_response(redirect(destination))
     response.set_cookie("cart_list", json.dumps(cart_products), httponly=True, samesite="Lax")
     return response
 

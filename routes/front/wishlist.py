@@ -8,7 +8,7 @@ from flask import (
 )
 
 from routes.front.home import front_bp
-from product import get_product_by_id
+from helper import get_product_by_id
 
 
 # ==========================================================

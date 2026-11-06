@@ -18,7 +18,8 @@
     <!-- BILLING DETAILS -->
     <div class="col-lg-7">
       <form method="POST" action="/checkout/confirm">
-        <div class="bg-white rounded-4 shadow-sm p-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="bg-white rounded-4 shadow-sm p-4">
           <div class="d-flex align-items-center mb-4">
             {% if user.profile_image %}
               <img src="{{ url_for('static', filename='uploads/profile/' + user.profile_image) }}"

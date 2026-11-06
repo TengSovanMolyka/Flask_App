@@ -103,6 +103,7 @@
                         <select name="brand" class="lb-select">
                             <option value="">Select brand</option>
                             <option value="Adidas" {% if product.brand == 'Adidas' %}selected{% endif %}>Adidas</option>
+                            <option value="Coach" {% if product.brand == 'Coach' %}selected{% endif %}>Coach</option>
                             <option value="H&M" {% if product.brand == 'H&M' %}selected{% endif %}>H&M</option>
                             <option value="Lululemon" {% if product.brand == 'Lululemon' %}selected{% endif %}>Lululemon</option>
                             <option value="Nike" {% if product.brand == 'Nike' %}selected{% endif %}>Nike</option>
@@ -199,7 +200,7 @@
                     <div class="col-md-6">
                         <label class="lb-label">Available Sizes</label>
                         <div class="lb-size-list">
-                            {% for size in ['XS','S','M','L','XL','XXL'] %}
+                            {% for size in ['XS','S','M','L','XL','XXL','One Size'] %}
                             <div class="lb-size-item">
                                 <input type="checkbox" name="size" value="{{ size }}" id="size{{ size }}"
                                        {% if size in (product.size or []) %}checked{% endif %}>

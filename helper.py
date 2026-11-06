@@ -213,239 +213,165 @@ def get_cart_data() -> dict:
 
 
 # ==========================================================
-# PRODUCT DATABASE HELPERS
+# PRODUCT HELPERS: DATABASE + product.py SAMPLE PRODUCTS
 # ==========================================================
-def product_to_dict(product):
-    """
-    Convert the new Product SQLAlchemy model
-    into the dictionary format used by the existing frontend.
-    """
 
-    # Product images
-    image_names = []
+# Reserve a separate ID range for the sample products in product.py.
+# Database product IDs remain unchanged.
+LEGACY_PRODUCT_ID_BASE = 1_000_000_000
 
-    if product.images:
-        image_names = [
-            image.name
-            for image in product.images
-            if image.name
-        ]
+def _to_float(value, default=0.0):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
-    # Fallback to thumbnail
-    if not image_names and product.thumbnail:
-        image_names = [product.thumbnail]
+def normalize_legacy_product(product, index):
+    """Convert one product.py dictionary into the common storefront shape."""
+    raw_id = product.get("_id", index)
+    try:
+        raw_id = int(raw_id)
+    except (TypeError, ValueError):
+        raw_id = index
 
-    # Main image
-    main_image = product.thumbnail
-
-    if not main_image and image_names:
-        main_image = image_names[0]
-
-    # Category name
-    category_name = ""
-
-    if product.category:
-        category_name = product.category.name
-
-    # Price
-    price = float(product.price) if product.price is not None else 0.0
-
-    # Cost
-    cost = float(product.cost) if product.cost is not None else None
-
+    price = _to_float(product.get("price"), 0.0)
+    image = product.get("image") or product.get("thumbnail") or ""
     return {
-        # Frontend-compatible ID
-        "_id": product.id,
-
-        # New product fields mapped to old frontend names
-        "title": product.name or "",
-        "name": product.name or "",
-
-        "isNew": getattr(product, "is_new", False),
-
-        "oldPrice": (
-            float(product.old_price)
-            if getattr(product, "old_price", None) is not None
-            else None
-        ),
-
+        "_id": LEGACY_PRODUCT_ID_BASE + raw_id,
+        "id": LEGACY_PRODUCT_ID_BASE + raw_id,
+        "source": "legacy",
+        "source_id": raw_id,
+        "title": product.get("title") or product.get("name") or "Untitled product",
+        "name": product.get("title") or product.get("name") or "Untitled product",
+        "isNew": bool(product.get("isNew", product.get("is_new", False))),
+        "is_new": bool(product.get("isNew", product.get("is_new", False))),
+        "oldPrice": _to_float(product.get("oldPrice", product.get("old_price")), None),
+        "old_price": _to_float(product.get("oldPrice", product.get("old_price")), None),
         "price": price,
-
-        "discountedPrice": (
-            float(product.discounted_price)
-            if getattr(product, "discounted_price", None) is not None
-            else price
-        ),
-
-        "cost": cost,
-
-        "description": product.description or "",
-
-        # Category
-        "category": category_name,
-        "category_id": product.category_id,
-
-        # New product structure
-        "stock": product.stock or 0,
-
-        # Temporary compatibility fields
-        "type": getattr(product, "type", "") or "",
-        "brand": getattr(product, "brand", "") or "",
-        "size": getattr(product, "size", None) or [],
-
-        # Image compatibility
-        "image": main_image,
-        "thumbnail": product.thumbnail,
-        "images": image_names,
-
-        "rating": (
-            float(product.rating)
-            if getattr(product, "rating", None) is not None
-            else 0
-        ),
+        "discountedPrice": _to_float(product.get("discountedPrice", product.get("discounted_price")), price),
+        "discounted_price": _to_float(product.get("discountedPrice", product.get("discounted_price")), price),
+        "description": product.get("description") or "",
+        "category": product.get("category") or "Uncategorized",
+        "category_id": None,
+        "type": product.get("type") or "",
+        "stock": int(product.get("stock") or 0),
+        "brand": product.get("brand") or "",
+        "size": product.get("size") or [],
+        "image": image,
+        "thumbnail": image,
+        "images": [image] if image else [],
+        "rating": _to_float(product.get("rating"), 0.0),
     }
 
-def get_product_by_id(product_id):
-    """
-    Get one product from the database.
-    """
+def product_to_dict(product):
+    """Convert a SQLAlchemy Product into the same shape as product.py data."""
+    image_names = [image.name for image in (product.images or []) if image.name]
+    main_image = product.thumbnail or (image_names[0] if image_names else "")
+    category_name = product.category.name if product.category else "Uncategorized"
+    price = _to_float(product.price, 0.0)
+    old_price = _to_float(product.old_price, None)
+    discounted_price = _to_float(product.discounted_price, price)
+    return {
+        "_id": product.id,
+        "id": product.id,
+        "source": "database",
+        "source_id": product.id,
+        "title": product.name or "Untitled product",
+        "name": product.name or "Untitled product",
+        "isNew": bool(product.is_new),
+        "is_new": bool(product.is_new),
+        "oldPrice": old_price,
+        "old_price": old_price,
+        "price": price,
+        "discountedPrice": discounted_price,
+        "discounted_price": discounted_price,
+        "cost": _to_float(product.cost, None),
+        "description": product.description or "",
+        "category": category_name,
+        "category_id": product.category_id,
+        "type": product.type or "",
+        "stock": int(product.stock or 0),
+        "brand": product.brand or "",
+        "size": product.size or [],
+        "image": main_image,
+        "thumbnail": main_image,
+        "images": image_names or ([main_image] if main_image else []),
+        "rating": _to_float(product.rating, 0.0),
+    }
 
+def get_all_store_products():
+    """Return products from both product.py and the SQLAlchemy database."""
+    legacy = [
+        normalize_legacy_product(item, index)
+        for index, item in enumerate(old_products, start=1)
+    ]
+    database = [
+        product_to_dict(item)
+        for item in Product.query.order_by(Product.id.desc()).all()
+    ]
+    # Keep database products first, followed by the original sample products.
+    return database + legacy
+
+def get_all_products():
+    """Backward-compatible alias for the combined storefront product list."""
+    return get_all_store_products()
+
+def get_product_by_id(product_id):
+    """Find a product from either source using its storefront ID."""
     try:
         product_id = int(product_id)
-    except (ValueError, TypeError):
+    except (TypeError, ValueError):
+        return None
+
+    if product_id >= LEGACY_PRODUCT_ID_BASE:
+        legacy_id = product_id - LEGACY_PRODUCT_ID_BASE
+        for index, item in enumerate(old_products, start=1):
+            try:
+                item_id = int(item.get("_id", index))
+            except (TypeError, ValueError):
+                item_id = index
+            if item_id == legacy_id:
+                return normalize_legacy_product(item, index)
         return None
 
     product = db.session.get(Product, product_id)
+    return product_to_dict(product) if product else None
 
-    if not product:
-        return None
-
-    return product_to_dict(product)
-
-
-def get_all_products():
-    # Products from database
-    db_products = Product.query.order_by(Product.id.desc()).all()
-    db_product_list = [product_to_dict(product) for product in db_products]
-
-    # Products from old product.py
-    old_product_list = old_products.copy()
-
-    # Combine old + new
-    return old_product_list + db_product_list
-
-def get_products_by_category(category, current_id=None):
-    """
-    Get products from the same category.
-    """
-
-    query = Product.query.filter(
-        Product.category == category
-    )
-
-    if current_id is not None:
-        try:
-            current_id = int(current_id)
-            query = query.filter(Product.id != current_id)
-        except (ValueError, TypeError):
-            pass
-
-    products = (
-        query
-        .order_by(Product.id.desc())
-        .all()
-    )
-
-    return [
-        product_to_dict(product)
-        for product in products
+def get_products_by_category(category, current_id=None, limit=8):
+    """Find related products across both sources."""
+    category_text = (category or "").strip().lower()
+    results = [
+        item for item in get_all_store_products()
+        if (item.get("category") or "").strip().lower() == category_text
+        and item.get("_id") != current_id
     ]
+    return results[:limit]
 
-def normalize_product(product):
-    """
-    Normalize old product.py data and database products
-    into the same frontend format.
-    """
-
+def decrease_product_stock(product_id, quantity):
+    """Decrease stock for either a database product or a product.py sample."""
+    product = get_product_by_id(product_id)
     if not product:
-        return None
+        return False
 
-    def to_float(value, default=None):
-        if value is None or value == "":
-            return default
+    quantity = max(int(quantity or 0), 0)
+    if product["stock"] < quantity:
+        return False
 
-        try:
-            return float(value)
-        except (ValueError, TypeError):
-            return default
-
-    return {
-        "_id": product.get("_id"),
-        "title": product.get("title", ""),
-        "isNew": product.get("isNew", False),
-
-        "oldPrice": to_float(
-            product.get("oldPrice")
-        ),
-
-        "price": to_float(
-            product.get("price"),
-            0
-        ),
-
-        "discountedPrice": to_float(
-            product.get("discountedPrice"),
-            to_float(product.get("price"), 0)
-        ),
-
-        "description": product.get("description", ""),
-
-        "category": product.get("category", ""),
-        "type": product.get("type", ""),
-
-        "stock": int(product.get("stock", 0) or 0),
-
-        "brand": product.get("brand", ""),
-
-        "size": product.get("size", []) or [],
-
-        "image": product.get("image"),
-
-        "rating": to_float(
-            product.get("rating"),
-            0
-        ),
-    }
-
-
-def get_all_store_products():
-    """
-    Return both old product.py products and database products.
-
-    Old products use IDs starting from 1001 to avoid
-    conflicts with database product IDs.
-    """
-
-    combined_products = []
-
-    # ==========================================
-    # OLD PRODUCTS
-    # ==========================================
-
-    for index, product in enumerate(old_products, start=1001):
-
-        old_product = normalize_product(product)
-
-        old_product["_id"] = index
-
-        combined_products.append(old_product)
-
-    # ==========================================
-    # DATABASE PRODUCTS
-    # ==========================================
-
-    database_products = get_all_products()
-
-    combined_products.extend(database_products)
-
-    return combined_products
+    if product["source"] == "database":
+        record = db.session.get(Product, product["source_id"])
+        if not record:
+            return False
+        record.stock = max(0, int(record.stock or 0) - quantity)
+    else:
+        legacy_id = product["source_id"]
+        for index, item in enumerate(old_products, start=1):
+            try:
+                item_id = int(item.get("_id", index))
+            except (TypeError, ValueError):
+                item_id = index
+            if item_id == legacy_id:
+                item["stock"] = max(0, int(item.get("stock", 0)) - quantity)
+                break
+    return True

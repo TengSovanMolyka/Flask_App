@@ -44,7 +44,7 @@
         <!-- PRODUCT IMAGE -->
         <div class="position-relative bg-light">
           <a href="{{ url_for('front.product', id=product['_id']) }}">
-            <img src="{{ product['image'] }}"
+            <img src="{% if product['image'] and product['image'].startswith('http') %}{{ product['image'] }}{% elif product['image'] %}{{ url_for('static', filename='uploads/products/' ~ product['image']) }}{% else %}https://placehold.co/600x750?text=Product{% endif %}"
                  alt="{{ product['title'] }}"
                  class="w-100"
                  style="height:220px; object-fit:cover;">
@@ -54,6 +54,7 @@
           <form method="POST"
                 action="{{ url_for('front.remove_from_wishlist', product_id=product['_id']) }}"
                 class="position-absolute top-0 end-0 m-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit"
                     class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
                     style="width:40px;height:40px;"
@@ -106,9 +107,10 @@
             <form method="POST"
                   action="{{ url_for('cart.add_to_cart') }}"
                   class="flex-grow-1">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <input type="hidden" name="product_id" value="{{ product['_id'] }}">
               <input type="hidden" name="quantity" value="1">
-              <input type="hidden" name="size" value="{{ product['size'][0] }}">
+              <input type="hidden" name="size" value="{{ product['size'][0] if product['size'] else 'One Size' }}">
               <button type="submit" class="btn btn-dark rounded-pill w-100">
                 <i class="bi bi-cart-plus me-1"></i> Cart
               </button>

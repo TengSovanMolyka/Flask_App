@@ -1,37 +1,9 @@
-from flask import render_template
+"""Storefront product routes are defined in routes.front.home.
 
-from product import (
-    products as pro,
-    get_product_by_id,
-    get_product_by_category,
-)
+This module remains as a compatibility import so older imports do not
+register a second set of /products and /product routes.
+"""
 
-from routes.front import front
+from routes.front.home import front_bp
 
-# ============================================================
-# PRODUCTS LIST
-# ============================================================
-@front.get("/products")
-def products():
-    return render_template(
-        "front/products.html",
-        products=pro,
-    )
-
-@front.get("/product/<int:id>")
-def product(id):
-    product = get_product_by_id(id)
-
-    if not product:
-        return "Product not found", 404
-
-    related_product = get_product_by_category(
-        product["category"],
-        product["_id"],
-    )
-
-    return render_template(
-        "front/product.html",
-        product=product,
-        related_product=related_product,
-    )
+__all__ = ["front_bp"]
