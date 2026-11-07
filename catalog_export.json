@@ -1,0 +1,233 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Women",
+      "image": "efdcbc95a31678b1b57a7cd8eab21125.jpg",
+      "description": "Women's fashion and clothing"
+    },
+    {
+      "id": 2,
+      "name": "Men",
+      "image": "jpg",
+      "description": "Men's fashion and clothing"
+    },
+    {
+      "id": 3,
+      "name": "Shoes",
+      "image": "Tegan_Slingback_Pump.jpg",
+      "description": "Shoes and footwear"
+    },
+    {
+      "id": 4,
+      "name": "Bags",
+      "image": "Coach_Womens_Suede_Lola_Shoulder_Bag_2.jpg",
+      "description": "Fashion bags and handbags"
+    },
+    {
+      "id": 5,
+      "name": "Accessories",
+      "image": "4ac98ba8e311facc639f075d2d63d256.jpg",
+      "description": "Fashion accessories"
+    },
+    {
+      "id": 6,
+      "name": "clothes",
+      "image": "6fd23fceb578878cb54ac251d4601ec3.jpg",
+      "description": "testing"
+    }
+  ],
+  "products": [
+    {
+      "id": 15,
+      "name": "Coach Super Soft Empire Carryall 34 Shoulder Bag",
+      "thumbnail": "coadb308851c022_1788198749666_2-0._QL90_UX1128_.jpg",
+      "cost": null,
+      "category_id": 1,
+      "is_new": 1,
+      "old_price": null,
+      "price": 475,
+      "discounted_price": null,
+      "description": "This Coach shoulder bag is crafted from calfskin and features gold-tone hardware, a structured base with metal feet, and a zip closure. The brand's commitment to quality craftsmanship is evident in the refined details and timeless silhouette of this carryall.",
+      "type": "Bag",
+      "stock": 13,
+      "brand": "Coach",
+      "size": "null",
+      "rating": 5.0,
+      "image": null,
+      "title": null
+    },
+    {
+      "id": 16,
+      "name": "Paris Texas Rose Boots 95mm",
+      "thumbnail": "ptexa3023445894_1786377662439_2-0._QL90_UX564_.jpg",
+      "cost": null,
+      "category_id": 3,
+      "is_new": 1,
+      "old_price": null,
+      "price": 1350,
+      "discounted_price": null,
+      "description": "Paris Texas's Rose Boots are crafted from leather and feature a pull-on design, pointed toe, and seam detail at the ankle. Made in Italy, these luxury boots showcase the brand's commitment to sophisticated craftsmanship and refined design.",
+      "type": "Boots",
+      "stock": 15,
+      "brand": "Gucci",
+      "size": "null",
+      "rating": 4.0,
+      "image": null,
+      "title": null
+    },
+    {
+      "id": 17,
+      "name": "Avec Les Filles",
+      "thumbnail": "afill3013028e1a_1788545493325_2-0._QL90_UX564_.jpg",
+      "cost": null,
+      "category_id": 1,
+      "is_new": 0,
+      "old_price": 213,
+      "price": 178,
+      "discounted_price": null,
+      "description": "Avec Les Filles Combo Collar Belted Hem Bomber",
+      "type": "Women",
+      "stock": 26,
+      "brand": "Dior",
+      "size": "[\"XS\", \"S\", \"M\", \"L\", \"XL\"]",
+      "rating": 4.7,
+      "image": null,
+      "title": null
+    },
+    {
+      "id": 18,
+      "name": "SHASHI Fleur de Rouge Earrings",
+      "thumbnail": "shash43560216a3_1793895463390_2-0._QL90_UX564_.jpg",
+      "cost": null,
+      "category_id": 5,
+      "is_new": 1,
+      "old_price": 156,
+      "price": 128,
+      "discounted_price": null,
+      "description": "These SHASHI earrings are crafted from 14k gold plated brass and feature a flower design and post closure. The intricate floral motif adds a romantic touch that makes these earrings well-suited for special occasions and celebratory moments.",
+      "type": "Women",
+      "stock": 10,
+      "brand": "Prada",
+      "size": "null",
+      "rating": 4.6,
+      "image": null,
+      "title": null
+    },
+    {
+      "id": 19,
+      "name": "Ray-Ban Kiliane Puffer Sunglasses",
+      "thumbnail": "raybn4103028e1d_1793638845185_2-0._QL90_UX564_.jpg",
+      "cost": null,
+      "category_id": 5,
+      "is_new": 1,
+      "old_price": 222,
+      "price": 202,
+      "discounted_price": null,
+      "description": "Ray-Ban's Kiliane Puffer Sunglasses feature a plastic frame with non-polarized lenses and a rectangular frame. The bold, sculptural design reflects the brand's iconic approach to eyewear with a modern twist.",
+      "type": "Women",
+      "stock": 9,
+      "brand": "Prada",
+      "size": "null",
+      "rating": 4.9,
+      "image": null,
+      "title": null
+    },
+    {
+      "id": 20,
+      "name": "FRAME Petite Pixie Le Slim Palazzo Pants",
+      "thumbnail": "frame335561071b_1793633744836_2-0._QL90_UX564_.jpg",
+      "cost": null,
+      "category_id": 1,
+      "is_new": 1,
+      "old_price": 329,
+      "price": 268,
+      "discounted_price": null,
+      "description": "These FRAME pants are crafted from mid-weight stretch denim and feature a button closure, zip fly, and 5-pocket styling.",
+      "type": "Women",
+      "stock": 12,
+      "brand": "Nike",
+      "size": "[\"XS\", \"S\", \"M\", \"L\"]",
+      "rating": 3.6,
+      "image": null,
+      "title": null
+    }
+  ],
+  "product_images": [
+    {
+      "id": 18,
+      "product_id": 15,
+      "name": "coadb308851c022_1788198749570_2-0._QL90_UX1128_.jpg"
+    },
+    {
+      "id": 19,
+      "product_id": 15,
+      "name": "coadb308851c022_1788198749663_2-0._QL90_UX1128_.jpg"
+    },
+    {
+      "id": 20,
+      "product_id": 15,
+      "name": "coadb308851c022_1788198749666_2-0._QL90_UX1128_.jpg"
+    },
+    {
+      "id": 21,
+      "product_id": 16,
+      "name": "ptexa3023445894_1786377662439_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 22,
+      "product_id": 16,
+      "name": "ptexa3023445894_1786377662480_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 23,
+      "product_id": 16,
+      "name": "ptexa3023445894_1786377662646_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 24,
+      "product_id": 17,
+      "name": "afill3013028e1a_1788545493325_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 25,
+      "product_id": 17,
+      "name": "afill3013028e1a_1788545494192_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 26,
+      "product_id": 18,
+      "name": "shash43560216a3_1793895463390_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 27,
+      "product_id": 18,
+      "name": "shash43560216a3_1793895463525_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 28,
+      "product_id": 19,
+      "name": "raybn4103028e1d_1793638845185_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 29,
+      "product_id": 19,
+      "name": "raybn4103028e1d_1793638848035_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 30,
+      "product_id": 19,
+      "name": "raybn4103028e1d_1793638848087_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 31,
+      "product_id": 20,
+      "name": "frame335561071b_1793633744836_2-0._QL90_UX564_.jpg"
+    },
+    {
+      "id": 32,
+      "product_id": 20,
+      "name": "frame335561071b_1793633866099_2-0._QL90_UX564_.jpg"
+    }
+  ]
+}
